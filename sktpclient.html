@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="author" content="Henning Pingel">
+    <title>Javascript SKTP Client</title>
+		<link rel="stylesheet" href="js/styles.css?v=1">
+		<script src="js/sktpclient.js?v=6"></script>
+		<script type="module">
+		  import TgaLoader from './js/tga.js';
+			var tga = new TgaLoader();
+			getSessionId(tga);
+		</script>
+  </head>
+  <body>
+    <p class="legend">Javascript SKTP Client with CSDb Launcher</p>
+    <div id="monitor">
+      <div id="screenwrapper"><div id="screen"></div>
+      </div>
+    </div>
+    <br/>
+      <!--p style="font-size: 0.5em;">Virtual keyboard for touch devices:</p-->
+		<div id="tga_container" style="display:none;">
+			<canvas id="tga" width="240" height="240"></canvas>
+			<p><a id="tgadownloadlink" href="">Download TGA Image</a></p>
+			</br>
+		</div>
+    <div id="monitor_socket">
+      <div id="buttonwrapper" onclick="handleClick();">
+        <button id="key_crsr_up"> CRSR &#x259e;&#x259a; </button>
+        <button id="key_crsr_down"> CRSR &#x259a;&#x259e; </button>
+        <button id="key_crsr_left"> CRSR &lt; </button>
+        <button id="key_crsr_right"> CRSR &gt; </button>
+        <button id="key_return"> Return </button>
+        <button id="key_arrow_left"> &#x2190; </button>
+        <button id="key_f1"> F1 </button>
+        <button id="key_f3"> F3 </button>
+        <button id="key_f5"> F5 </button>
+        <button id="key_c"> C </button>
+        <button id="key_d"> D </button>
+        <button id="key_f"> F </button>
+        <button id="key_p"> P </button>
+        <button id="key_q"> Q </button>
+        <button id="key_s"> S </button>
+        <button id="key_t"> T </button>
+        <button id="key_x"> X </button>
+      </div><br clear="all"/>
+    </div>
+    <div id="legend_container">
+    <p class="legend">Try out the SKTP browser that is part of the experimental Sidekick64 network kernel.</p>
+    <p class="legend">You can find all information about official Sidekick64 releases and its source code at <a href="https://github.com/frntc/Sidekick64" target="_blank">https://github.com/frntc/Sidekick64</a>.</p>
+    <p class="legend">All additional features for the network enabled Sidekick64 kernel can be found in the code fork at <a href="https://github.com/hpingel/Sidekick64" target="_blank">https://github.com/hpingel/Sidekick64</a>.</p>
+    <p class="legend">Documentation for the network features can be found in <a href="https://github.com/hpingel/Sidekick64/blob/net-rebase-on-v0.48/README_network.md" target="_blank">README_network.md</a>.</p>
+    <p class="legend">The Javascript SKTP client was written by emulaThor as of October 2021. The source code of the SKTP server for rendering the screen content has not been released yet.</p>
+    <p class="legend" style="font-size: 0.5em;">This webpage uses the nice C64 fonts from: <a href="https://style64.org/c64-truetype" target="_blank">https://style64.org/c64-truetype</a></p>
+    </div>
+  </body>
+</html>

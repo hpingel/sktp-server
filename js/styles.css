@@ -1,0 +1,159 @@
+/***************************************************************
+*  Copyright notice
+*
+*  (c) 2023 Henning Pingel
+*  All rights reserved
+*
+* This program is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, either version 3 of the License, or
+* (at your option) any later version.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*
+*/
+
+@font-face {
+		font-family: 'C64 Pro Mono';
+		src: url('../font/C64_Pro_Mono-STYLE.woff2') format('woff2'),
+				 url('../font/C64_Pro_Mono-STYLE.woff') format('woff');
+		font-weight: normal;
+		font-style: normal;
+}
+
+body { font-family: 'C64 Pro Mono', monospace; background-color: #1b2631; text-align: center;}
+
+p.legend { font-size: 0.8em; color:  #2980b9;}
+a{ color: beige;}
+
+div#legend_container{
+		width: 50%;
+		margin-left: auto;
+		margin-right: auto;
+}
+
+div#legend_container p{
+	margin-bottom: 2em;
+}
+
+div#monitor,
+div#monitor_socket{
+	font-size: 1em;
+	line-height: 1em;
+	padding: 1.5em 2em 2em 2em;
+	background-color:  #d0d3d4;
+	border: 0.3em solid #ecf0f1;
+	width: 53em;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+div#monitor_socket{
+	padding: 0em 2em 0em 2em;
+}
+
+div#screenwrapper{
+	font-size: 1em;
+	line-height: 1em;
+	padding: 1em;
+	background-color: #b2babb;
+	border: 0.2em solid #1c2833;
+	width: 51em;
+	height: 36em;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+@media screen and (min-width: 360px) and (max-width:499px) {
+	div#monitor,div#monitor_socket{font-size: 0.37em; line-height: 0.37em;}
+	div#legend_container{font-size: 0.7em;width:70%}
+}
+
+@media screen and (min-width: 500px) and (max-width:800px) {
+	div#monitor,div#monitor_socket{font-size: 0.5em; line-height: 0.5em;}
+	div#legend_container{font-size: 0.7em; width:70%;}
+}
+
+@media screen and (min-width: 801px) and (max-width:1200px) {
+	div#monitor,div#monitor_socket{font-size: 0.65em; line-height: 0.65em;}
+	div#buttonwrapper{font-size: 0.45em;}
+	div#legend_container{font-size: 0.9em;}
+}
+
+@media screen and (min-width: 1201px) {
+	div#monitor,div#monitor_socket{font-size: 0.9em; line-height: 0.9em;}
+	div#buttonwrapper{font-size: 0.45em;}
+	div#legend_container{font-size: 1em;}
+}
+
+div#screen{
+	border-width: 4em 4em 5em 4em;
+	border-style: solid;
+	border-color: black;
+	background-color: black;
+	color: white;
+	font-size: 1em;
+	line-height: 0.99em;
+	width: 40em;
+	white-space: pre;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+/*div#buttonwrapper{
+}*/
+
+button{
+	float: left;
+	margin: 0.2em;
+	padding: 0.5em;
+	vertical-align: center;
+	height: 3em;
+	min-width: 4em;
+	font-family: 'C64 Pro Mono', monospace;
+	font-size: 2em;
+	color: beige;
+	background-color: #641e16;
+	border: 1px solid #784212;
+}
+
+/*pepto palette*/
+span.c64col_0 { color: #000000;}
+span.c64col_1 { color: #ffffff;}
+span.c64col_2 { color: #68372B;}
+span.c64col_3 { color: #70A4B2;}
+span.c64col_4 { color: #6F3D86;}
+span.c64col_5 { color: #588D43;}
+span.c64col_6 { color: #352879;}
+span.c64col_7 { color: #B8C76F;}
+span.c64col_8 { color: #6F4F25;}
+span.c64col_9 { color: #433900;}
+span.c64col_10 { color: #9A6759;}
+span.c64col_11 { color: #444444;}
+span.c64col_12 { color: #6C6C6C;}
+span.c64col_13 { color: #9AD284;}
+span.c64col_14 { color: #6C5EB5;}
+span.c64col_15 { color: #959595;}
+
+.c64col_inverse_0 { color: black; background-color: #000000;}
+.c64col_inverse_1 { color: black; background-color: #ffffff;}
+.c64col_inverse_2 { color: black; background-color: #68372B;}
+.c64col_inverse_3 { color: black; background-color: #70A4B2;}
+.c64col_inverse_4 { color: black; background-color: #6F3D86;}
+.c64col_inverse_5 { color: black; background-color: #588D43;}
+.c64col_inverse_6 { color: black; background-color: #352879;}
+.c64col_inverse_7 { color: black; background-color: #B8C76F;}
+.c64col_inverse_8 { color: black; background-color: #6F4F25;}
+.c64col_inverse_9 { color: black; background-color: #433900;}
+.c64col_inverse_10 { color: black; background-color: #9A6759;}
+.c64col_inverse_11 { color: black; background-color: #444444;}
+.c64col_inverse_12 { color: black; background-color: #6C6C6C;}
+.c64col_inverse_13 { color: black; background-color: #9AD284;}
+.c64col_inverse_14 { color: black; background-color: #6C5EB5;}
+.c64col_inverse_15 { color: black; background-color: #959595;}
