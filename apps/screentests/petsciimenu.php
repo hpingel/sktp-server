@@ -43,7 +43,7 @@ class petsciimenu extends sktpBaseScreen{
 			"Talking face" => "T",
 			"VIC-II colors" => "V",
 			"Presenter" => "O",
-//			"QR-Code test" => "Q",
+			"QR-Code test" => "Q",
 			"Page skeleton" => "S",
 			"Page skeleton with list" => "I"
 		);
@@ -53,7 +53,7 @@ class petsciimenu extends sktpBaseScreen{
 			"C" => array( "screentests", "petsciicharset"),
 //			"X" => array( "screentests", "petsciislideshow"),
 			"P" => array( "screentests", "petsciianimation"),
-//			"Q" => array( "screentests", "petsciiqrcode"),
+			"Q" => array( "screentests", "petsciiqrcode"),
 			"T" => array( "screentests", "petsciiballoonface"),
 			"W" => array( "screentests", "petsciiwrappedtext"),
 			"S" => array( "screentests", "screenexample"),

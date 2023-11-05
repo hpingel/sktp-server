@@ -14,7 +14,7 @@ More documentation will be added on demand (maybe :-)).
 
 # SKTP-Apps 
 
-The sktp-server may ask different "apps" with different purposes. Existing apps are:
+The sktp-server may host different "apps" with different purposes. Pre-existing apps are:
 * "Petscii experiments" - Test screens that illustrate the different options to compose the screen content 
 * CSDB Browser/Launcher (sourcecode not yet public at this time)
 * HVSC Browser/Launcher (sourcecode not yet public at this time)
@@ -36,7 +36,7 @@ https://www.forum64.de/index.php?thread/120021-demo-textbasiertes-web-browsing-f
 * tga.js 1.1.1, Copyright (c) 2013-2020 Vincent Thibault, Inc., License: MIT, https://github.com/vthibault/tga.js
 * C64 TrueType fonts by Style, https://style64.org/c64-truetype, License: https://style64.org/c64-truetype/license
 * Unscii fonts by Viznut, http://viznut.fi/unscii/
-* php-qrcode by technicalguru, https://github.com/technicalguru/php-qrcode
+* php-qrcode by technicalguru, https://github.com/technicalguru/php-qrcode (added as git submodule)
 
 # 3rd party tools that are expected outside of the webroot
 * PHP8.x, PHP modules: MBString, SimpleXML, DOM, libXML, PDO SQLite, Zip, ImageMagick

@@ -20,7 +20,7 @@
 *
 */
 
-	require_once('lib/qrcodeincluder.php');
+	require_once('lib/puiQRCode.php');
 
 	class petsciiqrcode extends sktpBaseScreen{
 
@@ -41,7 +41,7 @@
 					1,23,"7"
 			);
 
-			$qr = new sktpQRCode($this);
+			$qr = new puiQRCode($this);
 			$qrData = $qr->generateQRCodeData( 'https://'.$_SERVER["SERVER_NAME"]);
 			$qr->drawQRCode($qr->getPetsciiQRCodeData($qrData, true),"left","center","F");
 			$qr->drawQRCode($qr->getPetsciiQRCodeData($qrData, false),"right","center","B");
