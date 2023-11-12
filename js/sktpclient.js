@@ -32,7 +32,8 @@ var sktpUrl = "./sktp.php?",
 	isTimeOutActive = false,
 	isCharsetLowerCase = true,
 	tga = false,
-	debug = false;
+	debug = false,
+	screenColorBackground = false;
 
 var chunkTypeDocumentation ={
 	0 : "normal/ascii",
@@ -420,7 +421,7 @@ function getScreenChunk(){
 	else if (chunk.type === 3){
 		chunk.timeout  = parseInt(screenData[ pointer++ ]);
 		if (!isTimeOutActive){
-			window.setTimeout( function(){isTimeOutActive = false; getScreen(keyHexHelper(0));},chunk.timeout*180);
+			window.setTimeout( function(){isTimeOutActive = false; getScreen(keyHexHelper(0));},chunk.timeout*20);
 			isTimeOutActive = true;
 		}
 		chunkDebugData(chunk);
@@ -434,6 +435,7 @@ function getScreenChunk(){
 		domscreenBackground.style = "background-color: "+ colors64[chunk.colorBackground] +
 			 "; border-color: " + colors64[chunk.colorBorder] + ";";
 		chunkDebugData(chunk);
+		screenColorBackground = chunk.colorBackground;
 	}
 	else {
 		console.error("unknown type:" + chunk.type + " / " + parseInt(chunk.type));
@@ -502,13 +504,15 @@ function renderScreen(){
 			}
 		}
 		else if ( screenChunks[z].type == 6 ){ //paintbrush chunk
-			var pbpos;
+			var pbpos, oldScreenColor;
 			for ( var r=0; r < screenChunks[z].repeat +1; r++ ){
 				for ( var c=0; c < screenChunks[z].length; c++ ){
 					pbpos = screenChunks[z].pos + c + (r * (screenChunks[z].gap + screenChunks[z].length));
 					//console.log("paintbrush r" + r + " pbpos " + pbpos);
+					oldScreenColor = screencolor[ pbpos];
 					screencolor[ pbpos] = parseInt(screenChunks[z].content[c]);
 					if (screencolor[ pbpos]==16) screencolor[ pbpos]=0;
+					if (oldScreenColor>127) screencolor[ pbpos] += 128;
 				}
 			}
 		}
@@ -529,7 +533,7 @@ function renderScreen(){
 			color = inverse ? color -128 : color;
 
 			if (inverse)
-			buffer +='<span class="c64col_inverse_'+ color +'">';
+			buffer +='<span class="c64col_inverse_'+ color +' c64col_'+screenColorBackground+'">';
 			else
 				buffer +='<span class="c64col_'+ color +'">';
 			lastColor = screencolor[z];
