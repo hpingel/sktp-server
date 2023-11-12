@@ -37,6 +37,7 @@ https://www.forum64.de/index.php?thread/120021-demo-textbasiertes-web-browsing-f
 * C64 TrueType fonts by Style, https://style64.org/c64-truetype, License: https://style64.org/c64-truetype/license
 * Unscii fonts by Viznut, http://viznut.fi/unscii/
 * php-qrcode by technicalguru, https://github.com/technicalguru/php-qrcode (added as git submodule)
+* Bootstrap (License: MIT) linked via CDN (https://getbootstrap.com/)
 
 # 3rd party tools that are expected outside of the webroot
 * PHP8.x, PHP modules: MBString, SimpleXML, DOM, libXML, PDO SQLite, Zip, ImageMagick
