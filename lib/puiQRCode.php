@@ -63,7 +63,7 @@ class puiQRCode {
 
 	private $baseScreen;
 
-	public function __construct( $baseScreen ){
+	public function __construct( sktpBaseScreen $baseScreen ){
 		$this->baseScreen = $baseScreen;
 	}
 

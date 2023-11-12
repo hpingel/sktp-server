@@ -34,7 +34,7 @@ class puiList
 		$frame,
 		$title;
 
-	function __construct(  $screen, $x, $y, $width = 40, $height = 5, $padLeft = 1,$frame = false, $title ="" ){
+	function __construct( sktpBaseScreen $screen, $x, $y, $width = 40, $height = 5, $padLeft = 1,$frame = false, $title ="" ){
 		$this->items = array();
 		$this->screen = $screen;
 		$this->x = $x;
