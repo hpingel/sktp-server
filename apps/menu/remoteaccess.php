@@ -22,7 +22,7 @@
 */
 
 require_once("lib/dbConnection.php");
-require_once('lib/qrcodeincluder.php');
+require_once('lib/puiQRCode.php');
 require_once('lib/puiWrappedText.php');
 require_once("apps/csdbBrowser/lib/baseScreenWithParser.php");
 
@@ -76,7 +76,7 @@ class remoteaccess extends csdbBaseScreenWithParser	{
 //		$this->addNormalChunkXY( "URL: ".$this->url, 0, $y++, "1");
         $y++;
 
-        $qr = new sktpQRCode($this);
+        $qr = new puiQRCode($this);
         $qrData = $qr->generateQRCodeData($this->url);
         $qr->drawQRCode($qr->getPetsciiQRCodeData($qrData, true),"center","center","F");
 
