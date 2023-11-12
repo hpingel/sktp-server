@@ -155,7 +155,8 @@ class sktpHandler {
 						"zipProxy",
 						"hvscBrowser",
 						"psid64Themes",
-						"search"
+						"search",
+						"petsciislideshow"
 					));
 					break;
 				case "rssFeeds":
@@ -185,7 +186,6 @@ class sktpHandler {
 						"petsciimenu", //default screen
 						"petsciicharset",
 						"petsciiqrcode",
-						"petsciislideshow",
 						"petsciianimation",
 						"screenexample",
 						"screenexample_with_list",

@@ -36,7 +36,6 @@ class petsciimenu extends sktpBaseScreen{
 
 		$listitems = array(
 			"Advent Calendar" => "A",
-//			"Graphics slideshow test" => "X",
 			"Animation test" => "P",
 			"Charset display test" => "C",
 			"Multiline text wrap test" => "W",
@@ -51,7 +50,6 @@ class petsciimenu extends sktpBaseScreen{
 		$this->listactions = array(
 			"A" => array( "screentests", "adventcalendar" ),
 			"C" => array( "screentests", "petsciicharset"),
-//			"X" => array( "screentests", "petsciislideshow"),
 			"P" => array( "screentests", "petsciianimation"),
 			"Q" => array( "screentests", "petsciiqrcode"),
 			"T" => array( "screentests", "petsciiballoonface"),
@@ -112,7 +110,6 @@ class petsciimenu extends sktpBaseScreen{
 				break;
 			case self::PETSCII_KEY["a"]:
 			case self::PETSCII_KEY["c"]:
-			case self::PETSCII_KEY["x"]:
 			case self::PETSCII_KEY["p"]:
 			case self::PETSCII_KEY["q"]:
 			case self::PETSCII_KEY["w"]:

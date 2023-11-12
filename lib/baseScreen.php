@@ -29,7 +29,9 @@ class sktpBaseScreen {
 		"instdel" => "14", //<-- hex (dec 20)
 		"space" => "20",
 		"plus" => "2B",
+		"comma" => "2C",
 		"minus" => "2D",
+		"fullstop" => "2E",
 		"clear" => "93", // dec 147
 		//147 clear    19 home    20 delete
 		"joystickbutton" => "5C", //dec 92 pound
@@ -343,12 +345,12 @@ class sktpBaseScreen {
 
 		$colorlist = str_replace(chr(0),chr(16), $colorlist);
 		$this->currentScreen .= chr(6).
-				chr($length % 256 ).	//charcount
-				chr($startpos%256). 	//lsb startpos
-				chr($posMSB).					//msb startpos
-				chr($gap). 						//gap between repeats
-				chr($repeatcount).		//repeatcount
-				$colorlist;						//chars
+				chr($length % 256 ).  //charcount
+				chr($startpos%256).   //lsb startpos
+				chr($posMSB).         //msb startpos
+				chr($gap).            //gap between repeats
+				chr($repeatcount).    //repeatcount
+				$colorlist;           //chars
 	}
 
 	private function addGenericChunk($type, $str, $pos, $length, $color){
@@ -544,88 +546,6 @@ class sktpBaseScreen {
 		if ($height > 2){
 			$this->addVerticalScreenCodeCharChunk($block.chr(160).chr(160), $x + 40*($y+1), $height-2, $color);
 		}
-	}
-
-	protected function drawFullscreenPicture($file){
-		$prg = file_get_contents($file);
-		$d = array(
-			2098 => array(
-				98
-			),
-			2758 => array(
-				651
-			),
-			10193 => array(
-				8193
-			)
-		);
-		$l = strlen($prg);
-		if ( array_key_exists($l,$d) )
-		{
-			$start = $d[$l][0];
-		}
-/*
-		file size  char start   color start
-		2098          98           1098
-		2758         651           1651
-		10193       6145           7145
-*/
-		else
-		{
-			$this->addColorCharsetChunk(0, 0, true);
-			$this->addNormalChunkXY( "File size check failed.", 1, 11, "7");
-			$this->addNormalChunkXY( "PRG file has wrong size:".strlen($prg), 1, 12, "7");
-			$this->addNormalChunkXY( "File will not be displayed.", 1, 13, "7");
-			return;
-		}
-		$colpos = strpos( $prg, chr(141). chr(32). chr(208) . chr(169));
-		if ($colpos !== false){
-			$bordercol = ord(substr($prg, $colpos-1, 1));
-			$bgcol = ord(substr($prg, $colpos+4, 1));
-			$this->addColorCharsetChunk($bordercol, $bgcol, false);
-		}
-		else if ($l === 2758){
-			$this->addColorCharsetChunk( 0, 0, false);
-		}
-		else
-			$this->addColorCharsetChunk(2, 2, false); //red screen indicates problem
-
-		$chars = substr($prg, $start,1000);
-		$this->addScreenCodeChunk( $chars, 0, "2");
-		
-		$start +=1000;
-		if ($_SESSION["sktpv"] < 3)
-		{
-			$colors1 = substr($prg, $start,255);
-			$colors2 = substr($prg, $start+255,255);
-			$colors3 = substr($prg, $start+510,255);
-			$colors4 = substr($prg, $start+765,235);
-			$this->addPaintBrushChunk( $colors1, 0, 0, 0);
-			$this->addPaintBrushChunk( $colors2, 255, 0, 0);
-			$this->addPaintBrushChunk( $colors3, 510, 0, 0);
-			$this->addPaintBrushChunk( $colors4, 765, 0, 0);
-		}
-		else{
-			//c64 VIC2 color conversion for 264/TED
-			if ($_SESSION["type"] == 264)
-				$this->addPaintBrushChunk( $this->vic2tedColorMatching(substr($prg, $start,1000)), 0, 0, 0);
-			else
-				$this->addPaintBrushChunk( substr($prg, $start,1000), 0, 0, 0);
-		}
-	}
-
-	//see https://www.forum64.de/index.php?thread/122351-farbmapping-von-vic-ii-farben-zu-ted-farben-bei-portierung-von-c64-screens-zu-c1
-	private function vic2tedColorMatching($colors){
-		$converted = "";
-		// mikes palette
-		$palette = array( 0,113,18,83,43,69,13,105,41,9,66,17,49,101,61,81);
-		// macBacon 0, 113, 34, 99, 68, 69, 38, 103, 72, 25, 66, 17, 49, 101, 86, 81
-		for ($z = 0; $z < strlen($colors); $z++){
-			$c = chr($palette[ord($colors[$z])]);
-			if ($c == chr(0)) $c = chr(16);
-			$converted .= $c;
-		}
-		return $converted;
 	}
 
 	protected function getFilename( $url){
