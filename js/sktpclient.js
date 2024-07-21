@@ -33,7 +33,8 @@ var sktpUrl = "./sktp.php?",
 	isCharsetLowerCase = true,
 	tga = false,
 	debug = false,
-	screenColorBackground = false;
+	screenColorBackground = false,
+	type = "64";
 
 var chunkTypeDocumentation ={
 	0 : "normal/ascii",
@@ -68,15 +69,32 @@ var colors64 = {
 };
 
 function getSessionId( tgai ){
-	var client = "sk";
+	var client = "sk", 
+		username = "webtester";
+
 	debug = (window.location.hash === "#debug");
 	if (!debug){
 		debug = (window.location.hash === "#debugwic");
-		if (debug) client = "wic";
+		if (debug) 
+			client = "wic";
+		else if (window.location.hash === "#sk-264")
+			type = "264";
+		else if (window.location.hash === "#wic-264"){
+			type = "264";
+			client = "wic";
+		}
 	}
 	tga = tgai;
+	var metaDataInfo = document.getElementById("clientMetadata");
+	metaDataInfo.innerHTML = "Commodore type: " + type + ", Network device: "+client + ", Debug mode: " + (debug?"on":"off");
+
 	var oReq = new XMLHttpRequest();
-	oReq.open("GET", sktpUrl + "session=new&sktpv="+sktpv+"&type=64&username=webtester&f="+client);
+	oReq.open("GET", sktpUrl + 
+		"session=new&sktpv="+sktpv+
+		"&type="+type+
+		"&username="+username+
+		"&f="+client
+	);
 	oReq.addEventListener("load", startSession);
 	oReq.send();
 }
@@ -106,7 +124,7 @@ function logKey(e) {
 	}
 	else switch (kc) {
 		case 27: //escape
-			kc = 95;
+			kc = type == 264 ? 27 : 95;
 			break;
 		case 8: //backspace
 			kc = 20;
@@ -126,14 +144,14 @@ function logKey(e) {
 		case 116://F5
 			kc = 135;
 			break;
-		case 118://F6
+		case 117://F6
 			kc = 139;
 			break;
-		case 119://F7
-			kc = 136;
+		case 118://F7
+			kc = type == 264 ? 140: 136;
 			break;
-		case 120://F8
-			kc = 140;
+		case 119://F8
+			kc = type == 264 ? 136: 140;
 			break;
 		case 38: //crsr_up
 			kc = 145;
@@ -353,7 +371,7 @@ function replaceTFTScreenImageFromURL(chunk){
 	chunkDebugData(chunk);
 }
 
-/*
+
 function sc2petscii(x){
 	if (x < 32)
 		x += 64;
@@ -365,7 +383,8 @@ function sc2petscii(x){
 	else if (x < 224 ) x -=64;
 	return x;
 }
-*/
+
+
 function getScreenChunk(){
 	var chunk = {}, z;
 	chunk.startpos= pointer;
@@ -394,10 +413,20 @@ function getScreenChunk(){
 		if (chunk.type >= 5 )
 			chunk.repeat = screenData[ pointer++ ];
 		chunk.content = new Array();
+		if (chunk.type <= 2)
+			chunk.content_dbg = "";
+		//workaround for 264 palette
+		if (type==264){
+			chunk.color -= 96;
+		}
+
 		if (chunk.type == 0)
 		{
 			for (z = 0; z < chunk.length; z++)
+			{
 				chunk.content[z] = screenData[z+pointer];
+				chunk.content_dbg += petsciimapDBG(screenData[z+pointer]);	
+			}
 			pointer += chunk.length;
 		}
 		else if (chunk.type == 1) //repeat
@@ -409,7 +438,12 @@ function getScreenChunk(){
 		else if (chunk.type == 2 || chunk.type == 5 || chunk.type == 6)
 		{
 			for (z = 0; z < chunk.length; z++)
+			{
 				chunk.content[z] = parseInt(screenData[z+pointer]);
+				if (chunk.type == 2)
+					chunk.content_dbg += petsciimapDBG(sc2petscii(screenData[z+pointer]));
+
+			}
 			pointer += chunk.length;
 		}
 		else{
@@ -429,11 +463,17 @@ function getScreenChunk(){
 	else if (chunk.type === 4){
 		chunk.colorBorder = screenData[ pointer++ ]-1;
 		chunk.colorBackground = screenData[ pointer++ ]-1;
+		//workaround to get colors in 264 mode
+		if (type==264){
+			chunk.colorBackground -= 96;
+			chunk.colorBorder -= 96;
+		}
 		isCharsetLowerCase = (screenData[ pointer++ ] == 1);
 		chunk.isCharsetLowerCase = isCharsetLowerCase;
 		var domscreenBackground = document.getElementById("screen");
-		domscreenBackground.style = "background-color: "+ colors64[chunk.colorBackground] +
-			 "; border-color: " + colors64[chunk.colorBorder] + ";";
+		domscreenBackground.style = 
+			"background-color: "+ colors64[chunk.colorBackground] +
+			"; border-color: " + colors64[chunk.colorBorder] + ";";
 		chunkDebugData(chunk);
 		screenColorBackground = chunk.colorBackground;
 	}
@@ -579,6 +619,44 @@ function petsciimap(b){
 				return "&#" + ( 60993 -97  + parseInt(b)) + ";";
 		}
 		return escapeHtml(String.fromCharCode(tmpByte));
+	}
+	else
+	{
+		 return "&#" + (57344 + parseInt(b) + (isCharsetLowerCase ? 256:0)) + ";";
+	}
+}
+
+function petsciimapDBG(b){
+	if ( b == 92) //pound key
+	{
+		return "&#163;";
+	}
+	else if ( b == 94) //arrow up
+	{
+		return "&#8593;";
+	}
+	else if ( b == 95 ) //arrow left = escape
+	{
+		return "&#x2190;";//"&#8592;";
+	}
+	else if ( b == 96) //horizontal line
+	{
+		return "&#9472;";
+	}
+	else if ( b < 123)
+	{
+		var tmpByte = parseInt(b);
+		if ( isCharsetLowerCase){
+			if ( tmpByte > 96 && tmpByte < 123)
+				tmpByte -= 32;
+			else if ( tmpByte > 64 && tmpByte < 91)
+				tmpByte += 32;
+		}
+		else{
+			if ( tmpByte > 96 && tmpByte < 123)
+				return "-"; //&#" + ( 60993 -97  + parseInt(b)) + ";";
+		}
+		return String.fromCharCode(tmpByte);
 	}
 	else
 	{

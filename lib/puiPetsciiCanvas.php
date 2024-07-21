@@ -24,10 +24,12 @@ class puiPetsciiCanvas{
 
     private
         $screen,
-        $invisibleInk;
+        $invisibleInk,
+		$charsetIsLowercase;
 
 	function __construct( sktpBaseScreen $screen ){
 		$this->screen = $screen;
+		$this->charsetIsLowercase = false;
     }
 
 	public function drawFullscreenPicture($file, $compressed = false){
@@ -79,19 +81,23 @@ class puiPetsciiCanvas{
 			$bordercol = ord(substr($prg, $colpos-1, 1));
 			$bgcol = ord(substr($prg, $colpos+4, 1));
 			$this->screen->addColorCharsetChunk($bordercol, $bgcol, $case == 23);
+			$this->charsetIsLowercase = $case == 23;
 		}
 		else if ($l === 2499||$l === 2115){
 			$bordercol = ord(substr($prg, 427, 1));
 			$bgcol = ord(substr($prg, 428, 1));
 			$this->screen->addColorCharsetChunk($bordercol, $bgcol, false);
-	}
-	else if ($l === 2758){
+			$this->charsetIsLowercase = false;
+		}
+		else if ($l === 2758){
 			$bgcol = 0;
 			$this->screen->addColorCharsetChunk( 0, 0, false);
+			$this->charsetIsLowercase = false;
 		}
 		else{
 			$bgcol = 2;
 			$this->screen->addColorCharsetChunk(2, 2, false); //red screen indicates problem
+			$this->charsetIsLowercase = false;
 		}
 	$this->invisibleInk = dechex($bgcol);
 		$chars = substr($prg, $start,1000);
@@ -114,7 +120,7 @@ class puiPetsciiCanvas{
 		}
 		else{
 			//c64 VIC2 color conversion for 264/TED
-			if ($_SESSION["type"] == 264)
+			if ($this->screen->isClientOn264())
 				$this->screen->addPaintBrushChunk( $this->vic2tedColorMatching(substr($prg, $start,1000)), 0, 0, 0);
 			else{
 				if ($compressed)
@@ -124,6 +130,11 @@ class puiPetsciiCanvas{
 
             }
 		}
+	}
+
+
+	public function isCharsetLowercase(){
+		return $this->charsetIsLowercase;
 	}
 
     private function compressedPaintbrushChunks( $chunk, $mode=true ){

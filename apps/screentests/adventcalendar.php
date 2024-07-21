@@ -174,11 +174,11 @@ class adventcalendar extends sktpBaseScreen{
 				true //lower case charset / upper case charset
 		);
 		$this->addNormalChunkXY( "Advent Calendar", 13, 0, $this->theme["fontColor"]);
+		$this->addCenteredF5F7ChunkY(23,$this->theme["fontColor"]);
+
 		$this->addCenteredScreenCodeChunkY(
 				$this->getScreenCodeFormattedKeyLegend("SPACE Open Door")." ".
-				$this->getScreenCodeFormattedKeyLegend("T Theme")." ".
-				$this->getScreenCodeFormattedKeyLegend("F5 Back")." ".
-				$this->getScreenCodeFormattedKeyLegend("F7 Menu"),
+				$this->getScreenCodeFormattedKeyLegend("T Theme"),
 				24,$this->theme["fontColor"]
 		);
 
@@ -231,7 +231,11 @@ class adventcalendar extends sktpBaseScreen{
 
 	public function handleKeypress($key, $enforceClear){
 		$pageChange = false;
-		switch ($key) {
+		if ($this->isScreenExitKeypress($key)){
+			$this->controller->setStartScreen();
+			return true; //screen has changed
+		}
+		else switch ($key) {
 			case self::PETSCII_KEY["crsr_up"]:
 				if ( $this->getSessionVar("focus") >7){
 					$this->setSessionVar("focus_old", $this->getSessionVar("focus"));
@@ -303,10 +307,6 @@ class adventcalendar extends sktpBaseScreen{
 					$_SESSION["csdbid"] = $surpriseID;
 					$_SESSION["screen"] = "singleRelease";
 				}
-				return true; //screen has changed
-			case self::PETSCII_KEY["arrow_left"]:
-			case self::PETSCII_KEY["F5"]:
-				$this->controller->setStartScreen();
 				return true; //screen has changed
 			default:
 					$this->updateScreen();

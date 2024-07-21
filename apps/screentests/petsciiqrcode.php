@@ -49,23 +49,12 @@
 	 	}
 
 	 	public function handleKeypress($key, $enforceClear){
-	 		$pageChange = false;
-	 		$decKey = hexdec($key);
-	 		switch ($key) {
-	 			/*
-	 			case self::PETSCII_KEY["crsr_up"]:
-	 					break;
-	 			case self::PETSCII_KEY["crsr_down"]:
-	 					break;
-	 			*/
-	 			case self::PETSCII_KEY["arrow_left"]:
-	 			case self::PETSCII_KEY["F5"]:
-					$this->controller->setStartScreen();
-	 				return true; //screen has changed
-	 			default:
-	 				$this->renderCompleteScreen();
-	 		}
-	 		return $pageChange;
+			if ($this->isScreenExitKeypress($key)){
+				$this->controller->setStartScreen();
+				return true; //screen has changed
+			}
+			$this->renderCompleteScreen();
+	 		return false;
 	 	}
 }
 ?>

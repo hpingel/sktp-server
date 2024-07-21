@@ -42,7 +42,7 @@ class wic64Portal extends sktpBaseScreen{
 		}
 		else{
 			$dl = true;
-			$url = $this->getURLToThisServer( "sktp4wic64/sktp-v0.23.prg" );
+			$url = $this->getURLToThisServer( "sktp4wic64/sktp-v0.24.prg" );
 		}
         $this->controller->setStartScreen();
         return $this->handleDownloadSimple($url, $dl); //don't save on SD
@@ -59,24 +59,19 @@ class wic64Portal extends sktpBaseScreen{
     }
 
 	public function handleKeypress($key, $enforceClear){
-		$pageChange = false;
-		switch ($key) {
-			case self::PETSCII_KEY["arrow_left"]:
-
-				case self::PETSCII_KEY["F5"]:
-				$this->controller->setStartScreen();
-				return true; //screen has changed
-			default:
-				if ( $enforceClear )
-				{
-					$this->renderCompleteScreen();
-				}
-				else{
-					$this->enforceScreenUpdate();
-					print $this->getCurrentScreen();
-				}
+		if ($this->isScreenExitKeypress($key)){
+			$this->controller->setStartScreen();
+			return true; //screen has changed
 		}
-		return $pageChange;
+		else if ( $enforceClear )
+		{
+			$this->renderCompleteScreen();
+		}
+		else{
+			$this->enforceScreenUpdate();
+			print $this->getCurrentScreen();
+		}
+		return false;
 	}
 }
 ?>

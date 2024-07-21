@@ -79,21 +79,18 @@ class petsciicharset extends sktpBaseScreen{
 	}
 
 	public function handleKeypress($key, $enforceClear){
-		$pageChange = false;
-		$decKey = hexdec($key);
-		switch ($key) {
+		if ($this->isScreenExitKeypress($key)){
+			$this->controller->setStartScreen();
+			return true; //screen has changed
+		}
+		else switch ($key) {
 			case self::PETSCII_KEY["t"]:
 				$this->setSessionVar("lowercase", !$this->getSessionVar("lowercase"));
 				$this->renderCompleteScreen();
 				break;
-			case self::PETSCII_KEY["arrow_left"]:
-			case self::PETSCII_KEY["F5"]:
-				$this->unsetRegisteredSessionVars();
-				$_SESSION["screen"] = "petsciimenu";
-				return true; //screen has changed
 			default:
 					$this->renderCompleteScreen();
 		}
-		return $pageChange;
+		return false;
 	}
 }

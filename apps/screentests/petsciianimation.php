@@ -80,9 +80,11 @@ class petsciianimation extends sktpBaseScreen{
 	}
 
 	public function handleKeypress($key, $enforceClear){
-		$pageChange = false;
-		$decKey = hexdec($key);
-		switch ($key) {
+		if ($this->isScreenExitKeypress($key)){
+			$this->controller->setStartScreen();
+			return true; //screen has changed
+		}
+		else switch ($key) {
 			case self::PETSCII_KEY["plus"]:
 				if ($this->getSessionVar("refreshSpeed") < 40)
 					$this->increaseSessionVar("refreshSpeed");
@@ -93,15 +95,10 @@ class petsciianimation extends sktpBaseScreen{
 					$this->decreaseSessionVar("refreshSpeed");
 				$this->updateScreen();
 				break;
-
-			case self::PETSCII_KEY["arrow_left"]:
-			case self::PETSCII_KEY["F5"]:
-				$this->controller->setStartScreen();
-				return true; //screen has changed
 			default:
-					$this->updateScreen();
+				$this->updateScreen();
 		}
-		return $pageChange;
+		return false;
 	}
 }
 

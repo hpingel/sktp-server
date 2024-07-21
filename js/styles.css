@@ -70,6 +70,8 @@ div#screenwrapper{
 	margin-right: auto;
 }
 
+span#clientMetadata{ font-size: 0.5em; color: yellow;}
+
 @media screen and (min-width: 360px) and (max-width:499px) {
 	div#monitor,div#monitor_socket{font-size: 0.37em; line-height: 0.37em;}
 	div#legend_container{font-size: 0.7em;width:70%}

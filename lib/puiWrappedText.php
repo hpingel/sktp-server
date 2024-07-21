@@ -109,13 +109,17 @@ class puiWrappedText {
 			else
 				$this->screen->drawBox($this->x,$this->y,$this->width ,$this->height,$colorBorder);
 		}
-		//if ($this->linesUsed <= $maxDrawableLines )
 		$currentLine=0;
 		{
 			foreach ($wrappedTextArray as $line){
 				$currentLine++;
 				if ( $currentLine > $maxDrawableLines)
 					break;
+				if ($currentLine === $maxDrawableLines && $this->linesUsed > $maxDrawableLines){
+					if ( $wrapWidth - strlen($line) < 3)
+						$line = substr($line,0,strlen($line)-3);
+					$line .= "..."; 
+				}
 				$leftpad = "";
 				if ($centered){
 					$leftpad = str_repeat($inverse?chr(160):" ",intval(($wrapWidth - strlen($line))/2));

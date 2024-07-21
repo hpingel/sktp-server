@@ -33,15 +33,28 @@ class welcome extends sktpBaseScreen{
 		parent::__construct( false );
 		$this->controller = $controller;
 
-		if ($this->isClientWiC64()){
+		if ($this->isClientOn264() && $this->isClientWiC64()){
 			$listItems = array(
-/*			
+//				"Petscii Slidehow" => "S",
+				"Petscii Experiments" => "P",
+/*
+				"RSS Reader" => "F",
+				"Arena" => "A",
+				"CSDb Launcher" => "C",
+				"CSDb Remote Access (Kick)" => "R",
+*/
+				"System information" => "I"
+			);
+		}
+		else if ($this->isClientWiC64()){
+			$listItems = array(
+/*
 				"CSDb Launcher" => "C",
 				"CSDb Remote Access (Kick)" => "R",
 				"HVSC Browser" => "H",
+*/
 				"WiC64 Portal" => "W",
-				"Arena" => "A",
-*/				
+//				"Arena" => "A",				
 				"Petscii Experiments" => "P",
 /*				
 				"RSS Reader" => "F",
@@ -77,10 +90,21 @@ class welcome extends sktpBaseScreen{
 //			"R" => array( "menu", "remoteaccess")
 			//"M" => array( "multiscreendemo", "demo")
 		);
-		if ($this->isClientWiC64())
-			$this->listactions["W"] = array( "menu", "wic64Portal");
-//		else
-//			$this->listactions["W"] = array( "menu", "wic64Portal");
+		$this->listactions["W"] = array( "menu", "wic64Portal");
+
+		if ($this->isClientOn264() && $this->isClientWiC64()){
+			$this->listactions = array(
+/*
+				"C" => array( "csdbBrowser", "menu" ),
+				"S" => array( "csdbBrowser", "petsciislideshow"),
+				"F" => array( "rssFeeds", "rss2binMenu"),
+				"A" => array( "arena", "nickname"),
+*/
+				"P" => array( "screentests", "petsciimenu"),
+				"I" => array( "menu", "systeminfo")
+//				"R" => array( "menu", "remoteaccess")
+			);
+		}
 		$this->list = new puiList( $this, 6, 9, 28, count($this->listactions), 0,true);
 		$type =""; $action="";$key="";
 
@@ -93,8 +117,13 @@ class welcome extends sktpBaseScreen{
 
 	public function renderCompleteScreen(){
 		$this->enforceClearScreen();
+		//FIXME get rid of template
 		$this->renderPetsciiBackgroundTemplate("Welcome",25, 5, 19,
-			($this->isClientWiC64() ? false : array("F7 Sidekick menu"))
+			($this->isClientWiC64() ? false : 
+				( $this->isClientOn264() ? 
+					array("HELP Sidekick menu"): array("F7 Sidekick menu")
+				)
+			) 	
 		);
 		$x=6;
 
@@ -154,7 +183,7 @@ class welcome extends sktpBaseScreen{
 			case self::PETSCII_KEY["m"]:
 			case self::PETSCII_KEY["r"]:
 			case self::PETSCII_KEY["w"]: //wic64 portal
-					return $this->handleListAction( chr(hexdec($key)) );
+				return $this->handleListAction( chr(hexdec($key)) );
 			default:
 				if ( $enforceClear )
 				{

@@ -65,29 +65,24 @@ class systeminfo extends sktpBaseScreen{
 		$this->addNormalChunkXY( "PHP Zip         : " . (extension_loaded('zip')?"OK":"-"), $x, $y++, "7");
 		$this->addNormalChunkXY( "PHP ImageMagick : " . $imv, $x, $y++, "7");
 
+		$this->addCenteredF5F7ChunkY(24);
 		$this->addColorCharsetChunk(0,0,true);
-
 		print $this->getCurrentScreen();
 	}
 
 	public function handleKeypress($key, $enforceClear){
-		$pageChange = false;
-		switch ($key) {
-			case self::PETSCII_KEY["arrow_left"]:
-			case self::PETSCII_KEY["F5"]:
-				$this->controller->setStartScreen();
-				return true; //screen has changed
-			default:
-				if ( $enforceClear )
-				{
-					$this->renderCompleteScreen();
-				}
-				else{
-					$this->enforceScreenUpdate();
-					print $this->getCurrentScreen();
-				}
+		if ($this->isScreenExitKeypress($key)){
+			$this->controller->setStartScreen();
+			return true; //screen has changed
 		}
-		return $pageChange;
+		else if ( $enforceClear ){
+			$this->renderCompleteScreen();
+		}
+		else{
+			$this->enforceScreenUpdate();
+			print $this->getCurrentScreen();
+		}
+		return false;
 	}
 }
 ?>

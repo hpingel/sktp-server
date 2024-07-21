@@ -102,6 +102,10 @@ class petsciimenu extends sktpBaseScreen{
 			print $this->getCurrentScreen();
 			return false;
 		}
+		else if ($this->isScreenExitKeypress($key)){
+			$this->setAppScreen("menu","welcome");
+			return true; //screen has changed
+		}
 		else switch ($key) {
 			case self::PETSCII_KEY["return"]:
 				$listaction = $this->list->getSelectedAction();
@@ -117,10 +121,6 @@ class petsciimenu extends sktpBaseScreen{
 			case self::PETSCII_KEY["o"]:
 			case self::PETSCII_KEY["v"]:
 				return $this->handleListAction( chr(hexdec($key)) );
-			case self::PETSCII_KEY["arrow_left"]:
-			case self::PETSCII_KEY["F5"]:
-				$this->setAppScreen("menu","welcome");
-				return true; //screen has changed
 			default:
 					$this->updateScreen();
 		}

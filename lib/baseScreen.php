@@ -75,16 +75,25 @@ class sktpBaseScreen {
 		"arrow_upwards" => "5E",
 		"arrow_left" => "5F",
 		"return" => "0D",
+
 		"F1" => "85",
 		"F3" => "86",
 		"F5" => "87",
-		"F7" => "88",
-		"*" => "2A",
-		"crsr_up" => "91", //145
-		"crsr_down" => "11", //17
-		"crsr_left" => "9D", //157
-		"crsr_right" => "1D", //29
+		"F7" => "88",//assign Plus/4 HELP
+		"F2" => "89",
+		"F4" => "8A",
+		"F6" => "8B",
+		"F8" => "8C",//this is F7 on Plus/4
 
+		"*" => "2A",
+		"crsr_up" 		=> "91", //145
+		"crsr_down" 	=> "11", //17
+		"crsr_left" 	=> "9D", //157
+		"crsr_right" 	=> "1D", //29
+
+		"plus4_escape" 	=> "1B", //027
+		"plus4_help" 	=> "88", //this is F7 on C64
+		"plus4_f7" 		=> "8C", //this is F8 on C64
 	];
 
 	private
@@ -101,7 +110,8 @@ class sktpBaseScreen {
 		$screenCharsetIsLowerCase,
 		$sessionVars,
 		$sessionVarPrefix,
-		$colorOffset;
+		$colorOffset,
+		$typeIs264;
 
 	function __construct( $debug ){
 		$this->registeredKeys = array();
@@ -118,7 +128,8 @@ class sktpBaseScreen {
 		$this->updateScreenColors = false;
 		if (!isset($_SESSION[$this->sessionVarPrefix]))
 			$_SESSION[$this->sessionVarPrefix] = array();
-		$this->colorOffset = intval($_SESSION["type"]) == 264 ? 96:0;
+		$this->typeIs264 = intval($_SESSION["type"]) == 264;
+		$this->colorOffset = $this->typeIs264 ? 96:0;
 	}
 
 	protected function setCase( $case ){
@@ -201,6 +212,10 @@ class sktpBaseScreen {
 
 	protected function isClientWiC64(){
 		return (isset($_SESSION["clientDevice"]) && $_SESSION["clientDevice"] === "wic");
+	}
+
+	public function isClientOn264(){
+		return $this->typeIs264;
 	}
 
 	protected function getCurrentScreen(){
@@ -287,28 +302,65 @@ class sktpBaseScreen {
 		$this->addScreenCodeChunkXY($chunk, $x, $y, $color);
 	}
 
+	protected function isScreenExitKeypress($key){
+		if ( $this->isClientOn264() )
+		{
+			return ( 
+				$key == self::PETSCII_KEY["plus4_escape"] ||
+				$key == self::PETSCII_KEY["plus4_f7"]
+			);
+		}
+		else
+			return ( 
+				$key == self::PETSCII_KEY["arrow_left"] ||
+				$key == self::PETSCII_KEY["F5"]
+			);
+	}
+
 	protected function addCenteredF5F7ChunkY($y = 24, $color = "7", $prefix = "", $uppercase = false){
-		$arrowLeft = chr(31);
-		$f5back = "/F5 Back";
-		$f7 = "F7 Sidekick menu";
+		$exitKeyLegend = " Sidekick menu"; 
+		if ( $this->isClientOn264() ){
+			$f5back = "ESC/F7 Back";
+			$exitKey = "HELP";
+			$arrowLeft = "";
+		}
+		else{
+			$f5back = "/F5 Back";
+			$exitKey = "F7"; 
+			$arrowLeft = chr(31);
+		}
 
 		if ($uppercase){
 			$f5back = strtoupper($f5back);
 			$prefix = strtoupper($prefix);
-			$f7 = strtoupper($f7);
+			$exitKey = strtoupper($exitKey);
+			$exitKeyLegend = strtoupper($exitKeyLegend);
 		}
 
 		$c ="";
 		if ($prefix !== ""){
-			$c = $this->getScreenCodeFormattedKeyLegend($prefix)." ";
-			if (substr($prefix,0,1) === $arrowLeft ){
-				$arrowLeft = "";
-				$f5back = ltrim( $f5back,"/");
+			$prefixes = explode(";",$prefix);
+			foreach ($prefixes as $index=>$prefix){
+				$c .= $this->getScreenCodeFormattedKeyLegend($prefix)." ";
+				//in case that arrow left is used in prefix, we get rid of it
+				//in context of F5
+				if (substr($prefix,0,1) === $arrowLeft ){
+					$arrowLeft = "";
+					$f5back = ltrim( $f5back,"/");
+				}
 			}
 		}
 		$c .= $this->getScreenCodeFormattedKeyLegend($arrowLeft.$f5back);
 		if (!$this->isClientWiC64())
-			$c .= " " .$this->getScreenCodeFormattedKeyLegend($f7);
+		{
+			$minLength = strlen($c) + strlen($exitKey) +1;
+			if ( $minLength < 38){
+				if ( $minLength + strlen($exitKeyLengend) > 32){
+					$exitKeyLegend = $uppercase ? " EXIT":" Exit";
+				}
+				$c .= " " .$this->getScreenCodeFormattedKeyLegend($exitKey.$exitKeyLegend);
+			}
+		}
 		$this->addCenteredScreenCodeChunkY($c, $y, $color);
 	}
 

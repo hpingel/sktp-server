@@ -120,11 +120,11 @@ class petsciiballoonface extends sktpBaseScreen{
 
 	public function handleKeypress($key, $enforceClear){
 		$pageChange = false;
-		switch ($key) {
-			case self::PETSCII_KEY["arrow_left"]:
-			case self::PETSCII_KEY["F5"]:
-				$this->controller->setStartScreen();
-				return true; //screen has changed
+		if ($this->isScreenExitKeypress($key)){
+			$this->controller->setStartScreen();
+			return true; //screen has changed
+		}
+		else switch ($key) {
 			default:
 					$this->updateScreen();
 		}

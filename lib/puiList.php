@@ -239,7 +239,7 @@ class puiList
 	}
 
 	public function handleKeypress($key){
-
+		$key_pageNext = $this->screen->isClientOn264() ? $this->screen::PETSCII_KEY["F2"] : $this->screen::PETSCII_KEY["F3"]; 
 		switch ($key) {
 			case $this->screen::PETSCII_KEY["crsr_up"]:
 					$scrollUp = ( $this->screen->getSessionVar("listSelection") == $this->screen->getSessionVar("listScrollPosOld") ) && $this->scrollUpPossible();
@@ -260,7 +260,7 @@ class puiList
 					return true;
 
 					break;
-			case $this->screen::PETSCII_KEY["F3"]:
+			case $key_pageNext:
 					if ( $this->getItemCount() < $this->getHeight()){
 						return false;
 					}
