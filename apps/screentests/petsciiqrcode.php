@@ -37,8 +37,9 @@
 			$this->addNormalChunkXY( ("PETSCII"), 1, 1, "7");
 			$this->addNormalChunkXY( ("QR-Code"), 1, 3, "7");
 			$this->addScreenCodeChunkXY(
-					$this->getScreenCodeFormattedKeyLegend("F5 Back"),
-					1,23,"7"
+				$this->getScreenCodeFormattedKeyLegend(
+					($this->isClientOn264()?"F7":"F5") . " Back"
+				), 1,23,"7"
 			);
 
 			$qr = new puiQRCode($this);
