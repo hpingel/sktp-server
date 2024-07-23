@@ -110,7 +110,7 @@ class puiQRCode {
 	public function drawQRCode($dataArray, $halign, $valign, $color){
 		list($resultData, $width, $height) = $dataArray;
 
-		if (intval($halign) === $halign)
+		if (is_int($halign))
 			$xpad = $halign;
 		else
 			switch ($halign){
@@ -120,23 +120,23 @@ class puiQRCode {
 				case "right":
 					$xpad = 40 - $width;
 					break;
-					case "left":
-					default:
-						$xpad = 0;
-						break;
+				case "left":
+				default:
+					$xpad = 0;
+					break;
 			}
 
-		if (intval($valign) === $valign)
+		if (is_int($valign))
 			$ypad = $valign;
 		else
 			switch ($valign){
 				case "center":
 					$ypad = intval(( 25 - $height)  / 2);
 					break;
-				case "right":
+				case "bottom":
 					$ypad = 25 - $height;
 					break;
-				case "left":
+				case "top":
 				default:
 					$ypad = 0;
 					break;
