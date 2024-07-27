@@ -224,7 +224,7 @@ class adventcalendar extends sktpBaseScreen{
 			$this->drawBoxFull($xpos, 3+$y*7+$door["yoffset"], $width, 5, $boxcolor, $this->theme["roundedCorners"]);
 
 		//number label on door
-		$color = strval(dechex(hexdec(strtolower($boxcolor))+128));
+		$color = strval(dechex($boxcolor+128));
 		$xoffset = intval(($door["width"]+1)/3);
 		$this->addNormalChunkXY( $door["number"], $door["xpos"]+$xoffset, 3+$y*7+2+$door["yoffset"], $color);
 	}

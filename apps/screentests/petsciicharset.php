@@ -47,20 +47,21 @@ class petsciicharset extends sktpBaseScreen{
 		$y = $this->renderCharBlock($y, 96, -32);
 		$y = $this->renderCharBlock($y, 160, -64);
 
-		$this->drawHorizontalLine( 23 );
-		$this->addCenteredF5F7ChunkY(24,"7", "T Toggle Case",!$lc);
-
 		$this->drawBox(34, 2, 2, 2);
 		$this->drawBox(34, 4, 3, 3);
 		$this->drawBox(34, 7, 4, 4);
 		$this->drawBox(34, 11, 5, 5);
 		$this->drawBox(34, 16, 6, 6);
 
+		$this->drawHorizontalLine( 23 );
+		$this->addCenteredF5F7ChunkY(24,"7", "T Toggle Case",!$lc);
+
 		print $this->getCurrentScreen();
 	}
 
 	private function renderCharBlock($y, $start, $scrCodeOffset){
-		$reverse = strval(dechex(hexdec(strtolower("5"))+128));
+		$color = 5;
+		$reverse = strval(dechex($color+128));
 		$cnt = "";
 		$scrcodeline = "";
 		$stop = $start+31;

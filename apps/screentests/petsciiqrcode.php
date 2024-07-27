@@ -34,8 +34,8 @@
 	 	public function renderCompleteScreen(){
 	 		$this->enforceClearScreen();
 	 		$this->addColorCharsetChunk(2, 0, true);
-			$this->addNormalChunkXY( ("PETSCII"), 1, 1, "7");
-			$this->addNormalChunkXY( ("QR-Code"), 1, 3, "7");
+			$this->addNormalChunkXY( "PETSCII", 1, 1, "7");
+			$this->addNormalChunkXY( "QR-Code", 1, 3, "7");
 			$this->addScreenCodeChunkXY(
 				$this->getScreenCodeFormattedKeyLegend(
 					($this->isClientOn264()?"F7":"F5") . " Back"

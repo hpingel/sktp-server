@@ -113,7 +113,7 @@ class puiWrappedText {
 		{
 			foreach ($wrappedTextArray as $line){
 				$currentLine++;
-				if ( $currentLine > $maxDrawableLines)
+				if ($currentLine > $maxDrawableLines)
 					break;
 				if ($currentLine === $maxDrawableLines && $this->linesUsed > $maxDrawableLines){
 					if ( $wrapWidth - strlen($line) < 3)
