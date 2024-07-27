@@ -48,26 +48,6 @@ var chunkTypeDocumentation ={
 	8 : "tft_image_inline"
 }
 
-/* pepto */
-var colors64 = {
-	0 : "#000000",
-	1 : "#ffffff",
-	2 : "#68372B",
-	3 : "#70A4B2",
-	4 : "#6F3D86",
-	5 : "#588D43",
-	6 : "#352879",
-	7 : "#B8C76F",
-	8 : "#6F4F25",
-	9 : "#433900",
-	10 : "#9A6759",
-	11 : "#444444",
-	12 : "#6C6C6C",
-	13 : "#9AD284",
-	14 : "#6C5EB5",
-	15 : "#959595"
-};
-
 function getSessionId( tgai ){
 	var client = "sk", 
 		username = "webtester";
@@ -415,11 +395,6 @@ function getScreenChunk(){
 		chunk.content = new Array();
 		if (chunk.type <= 2)
 			chunk.content_dbg = "";
-		//workaround for 264 palette
-		if (type==264){
-			chunk.color -= 96;
-		}
-
 		if (chunk.type == 0)
 		{
 			for (z = 0; z < chunk.length; z++)
@@ -463,17 +438,13 @@ function getScreenChunk(){
 	else if (chunk.type === 4){
 		chunk.colorBorder = screenData[ pointer++ ]-1;
 		chunk.colorBackground = screenData[ pointer++ ]-1;
-		//workaround to get colors in 264 mode
-		if (type==264){
-			chunk.colorBackground -= 96;
-			chunk.colorBorder -= 96;
-		}
 		isCharsetLowerCase = (screenData[ pointer++ ] == 1);
 		chunk.isCharsetLowerCase = isCharsetLowerCase;
+		var classPrefix = (type == 264)? "ted":"c64";
 		var domscreenBackground = document.getElementById("screen");
-		domscreenBackground.style = 
-			"background-color: "+ colors64[chunk.colorBackground] +
-			"; border-color: " + colors64[chunk.colorBorder] + ";";
+		domscreenBackground.className = 
+			classPrefix + "col_bg_"+ chunk.colorBackground + " "+
+			classPrefix + "col_bo_"+ chunk.colorBorder;
 		chunkDebugData(chunk);
 		screenColorBackground = chunk.colorBackground;
 	}
@@ -551,7 +522,9 @@ function renderScreen(){
 					//console.log("paintbrush r" + r + " pbpos " + pbpos);
 					oldScreenColor = screencolor[ pbpos];
 					screencolor[ pbpos] = parseInt(screenChunks[z].content[c]);
-					if (screencolor[ pbpos]==16) screencolor[ pbpos]=0;
+					if (type != 264 && screencolor[ pbpos]==16) screencolor[ pbpos]=0;
+					//the paintbrush chunk should keep the reverse state if it was drawn as 
+					//reversed before
 					if (oldScreenColor>127) screencolor[ pbpos] += 128;
 				}
 			}
@@ -562,6 +535,7 @@ function renderScreen(){
 	var buffer = "";
 	var lastColor = false;
 	var lastInverse = false;
+	var gpuPrefix = (type == 264) ? "tedcol":"c64col";
 	for (var z=0; z < 1000; z++){
 		if ( screencolor[z] !== lastColor)
 		{
@@ -573,9 +547,10 @@ function renderScreen(){
 			color = inverse ? color -128 : color;
 
 			if (inverse)
-			buffer +='<span class="c64col_inverse_'+ color +' c64col_'+screenColorBackground+'">';
+			buffer +='<span class="'+gpuPrefix+'_inverse_'+ color +' '+
+				gpuPrefix+'_'+screenColorBackground+'">';
 			else
-				buffer +='<span class="c64col_'+ color +'">';
+				buffer +='<span class="'+gpuPrefix+'_'+ color +'">';
 			lastColor = screencolor[z];
 		}
 
