@@ -193,7 +193,8 @@ class sktpHandler {
 						"petsciiwrappedtext",
 						"petsciiballoonface",
 						"petsciipresenter",
-						"vic2colors"
+						"vic2colors",
+						"tedcolors"
 					));
 					break;
 /*

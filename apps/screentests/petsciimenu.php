@@ -41,6 +41,7 @@ class petsciimenu extends sktpBaseScreen{
 			"Multiline text wrap test" => "W",
 			"Talking face" => "T",
 			"VIC-II colors" => "V",
+			"TED colors" => "E",
 			"Presenter" => "O",
 			"QR-Code test" => "Q",
 			"Page skeleton" => "S",
@@ -57,7 +58,8 @@ class petsciimenu extends sktpBaseScreen{
 			"S" => array( "screentests", "screenexample"),
 			"I" => array( "screentests", "screenexample_with_list"),
 			"O" => array( "screentests", "petsciipresenter"),
-			"V" => array( "screentests", "vic2colors")
+			"V" => array( "screentests", "vic2colors"),
+			"E" => array( "screentests", "tedcolors")
 		);
 
 		$this->list = new puiList( $this, 6, 9, 28, 9, 0, true);
@@ -114,6 +116,7 @@ class petsciimenu extends sktpBaseScreen{
 				break;
 			case self::PETSCII_KEY["a"]:
 			case self::PETSCII_KEY["c"]:
+			case self::PETSCII_KEY["e"]:
 			case self::PETSCII_KEY["p"]:
 			case self::PETSCII_KEY["q"]:
 			case self::PETSCII_KEY["w"]:
