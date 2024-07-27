@@ -110,8 +110,8 @@ class sktpBaseScreen {
 		$screenCharsetIsLowerCase,
 		$sessionVars,
 		$sessionVarPrefix,
-		$colorOffset,
-		$typeIs264;
+		$typeIs264,
+		$nativeTEDColorsFor264;
 
 	function __construct( $debug ){
 		$this->registeredKeys = array();
@@ -129,7 +129,12 @@ class sktpBaseScreen {
 		if (!isset($_SESSION[$this->sessionVarPrefix]))
 			$_SESSION[$this->sessionVarPrefix] = array();
 		$this->typeIs264 = intval($_SESSION["type"]) == 264;
-		$this->colorOffset = $this->typeIs264 ? 96:0;
+		$this->nativeTEDColorsFor264 = false;
+	}
+
+	public function allowNativeTEDColors(){
+		if ($this->typeIs264)
+			$this->nativeTEDColorsFor264 = true;
 	}
 
 	protected function setCase( $case ){
@@ -355,12 +360,14 @@ class sktpBaseScreen {
 		{
 			$minLength = strlen($c) + strlen($exitKey) +1;
 			if ( $minLength < 38){
-				if ( $minLength + strlen($exitKeyLengend) > 32){
+				if ( $minLength + strlen($exitKeyLengend) > 29){
 					$exitKeyLegend = $uppercase ? " EXIT":" Exit";
 				}
 				$c .= " " .$this->getScreenCodeFormattedKeyLegend($exitKey.$exitKeyLegend);
 			}
 		}
+		$color = $this->nativeTEDColorsFor264 ? "7E": $color;
+
 		$this->addCenteredScreenCodeChunkY($c, $y, $color);
 	}
 
@@ -370,19 +377,28 @@ class sktpBaseScreen {
 
 	public function addColorCharsetChunk($borderColor, $backgroundColor, $isCharsetLowerCase){
 		$this->updateScreenColors = true;
-		$this->screenColorBG = $backgroundColor;// + $this->colorOffset;
-		$this->screenColorBorder = $borderColor;// + $this->colorOffset;
+		if( $this->typeIs264 && !$this->nativeTEDColorsFor264){
+			$backgroundColor = $this->vic2tedColorMatchingSingle($backgroundColor);
+			$borderColor = $this->vic2tedColorMatchingSingle($borderColor);
+		}
+		$this->screenColorBG = $backgroundColor;
+		$this->screenColorBorder = $borderColor;
 		$this->screenCharsetIsLowerCase = $isCharsetLowerCase;
 	}
 
 	public function addVerticalScreenCodeCharChunk($chars, $startpos, $repeatcount, $color){
 		//if( $_SESSION["sktpv"] > 1)
 		//length 6+chars
+		if( $this->typeIs264 && !$this->nativeTEDColorsFor264 )
+			$color=$this->vic2tedColorMatching($color);
+		else
+			$color=chr(hexdec($color));
+
 		$this->currentScreen .= chr(5).
 				chr(strlen($chars)).				//charcount
 				chr($startpos%256). 				//lsb startpos
 				chr(intval($startpos/256)). //msb startpos
-				chr(hexdec($color)+$this->colorOffset).//color
+				$color.
 				chr($repeatcount).					//repeatcount
 				$chars;											//chars
 	}
@@ -396,6 +412,9 @@ class sktpBaseScreen {
 		if (($lengthMSB & 1) == 1) $posMSB = $posMSB + 16; //bit 4 / 256
 
 		$colorlist = str_replace(chr(0),chr(16), $colorlist);
+		if( $this->typeIs264 && !$this->nativeTEDColorsFor264 )
+			$colorlist = $this->vic2tedColorMatchingOrd($colorlist);
+
 		$this->currentScreen .= chr(6).
 				chr($length % 256 ).  //charcount
 				chr($startpos%256).   //lsb startpos
@@ -403,6 +422,34 @@ class sktpBaseScreen {
 				chr($gap).            //gap between repeats
 				chr($repeatcount).    //repeatcount
 				$colorlist;           //chars
+	}
+
+
+	//see https://www.forum64.de/index.php?thread/122351-farbmapping-von-vic-ii-farben-zu-ted-farben-bei-portierung-von-c64-screens-zu-c1
+	private function vic2tedColorMatching($colors){
+		$converted = "";
+		for ($z = 0; $z < strlen($colors); $z++){
+			$converted .= chr($this->vic2tedColorMatchingSingle(hexdec($colors[$z])));
+		}
+		return $converted;
+	}
+
+	private function vic2tedColorMatchingOrd($colors){
+		$converted = "";
+		for ($z = 0; $z < strlen($colors); $z++){
+			$converted .= chr($this->vic2tedColorMatchingSingle(ord($colors[$z])));
+		}
+		return $converted;
+	}
+
+	private function vic2tedColorMatchingSingle($color){
+		if ( !is_int($color)) die("We expect integer!");
+		// mikes palette
+		//avoid 0 for black, use 16 instead
+		$palette = array( 16,113,18,83,43,69,13,105,41,9,66,17,49,101,61,81);
+		// macBacon 0, 113, 34, 99, 68, 69, 38, 103, 72, 25, 66, 17, 49, 101, 86, 81
+		return $palette[$color];
+
 	}
 
 	private function addGenericChunk($type, $str, $pos, $length, $color){
@@ -414,11 +461,21 @@ class sktpBaseScreen {
 		if (($lengthMSB & 2) == 2) $posMSB = $posMSB + 32; //bit 5 / 512
 		if (($lengthMSB & 1) == 1) $posMSB = $posMSB + 16; //bit 4 / 256
 		//error_log ("length: " . $length . " bits " . ($lengthMSB & 1) . " ". ($lengthMSB & 2) . " p " . $posMSB . " pos ". intval($pos/256) . " l " . $lengthMSB,0 );
+
+		if( $this->typeIs264 && !$this->nativeTEDColorsFor264){
+			$color = hexdec($color);
+			$reverse = ( $color > 127);
+			if ($reverse)  $color -= 128;
+			$color=$this->vic2tedColorMatchingSingle($color);
+			$color = chr($color + ($reverse ? 128:0));
+		}
+		else
+			$color=chr(hexdec($color));
 		$this->currentScreen .= chr($type).
 		 		chr($length % 256).
 				chr($pos % 256).
 				chr($posMSB).
-				chr(hexdec($color) + $this->colorOffset).
+				$color.
 				$str;
 	}
 
@@ -450,12 +507,14 @@ class sktpBaseScreen {
 
 	protected function drawTitleBar( $section )
 	{
-		$this->addNormalChunkXY($section, 1, 0, "7");
+		$color = $this->nativeTEDColorsFor264 ? "7B": "7";
+		$this->addNormalChunkXY($section, 1, 0, $color);
 	}
 
 	protected function drawHorizontalLine( $y )
 	{
-		$this->addCharRepeatChunk(chr(96),   $y*40, 40, "B");
+		$color = $this->nativeTEDColorsFor264 ? "1E": "B";
+		$this->addCharRepeatChunk(chr(96),   $y*40, 40, $color);
 	}
 
 
