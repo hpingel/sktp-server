@@ -23,42 +23,52 @@
 class tedcolors extends sktpBaseScreen{
 
 	private $controller,
-        $pc;
+	$pc;
 
 	function __construct( $controller ){
 		parent::__construct( false );
 		$this->controller = $controller;
-        $this->allowNativeTEDColors();
+		$this->allowNativeTEDColors();
 	}
 
 	public function renderCompleteScreen(){
-        $this->enforceClearScreen();
+		$this->enforceClearScreen();
 		$this->addColorCharsetChunk(
 				0, //border color
 				0, //background color
-				true //lower case charset / upper case charset
+				false //lower case charset / upper case charset
 		);
-		$this->drawTitleBar("           *** TED Colors ***");
+		$this->drawTitleBar("           *** TED COLORS ***");
 
-        if ( !$this->isClientOn264()){
-            $this->addNormalChunkXY( "This screen only works on Commodore 16, 116 and Plus/4", 1, 10, "2");
-            $this->addCenteredF5F7ChunkY(24,"1");
-        }
-        else{
-            $y = 6;
-            $height = 2;
-            $this->addScreenCodeChunk(str_repeat(chr(160), 80*$height*2), 40*$y,"0" );
-            for ( $a=0 ; $a < 16; $a++){
-                for ( $l=0 ; $l < 8; $l++){
-
-                $this->addPaintBrushChunk(
-                    str_repeat(chr($a+16*$l),$height),
-                    $y*40+$a*$height +4+ ($l*40), ($height-1), 40-$height);
-                }
-            }
-            $this->drawBox(3,$y-1,34,2+4*$height,"1");
-            $this->addCenteredF5F7ChunkY(24,"E1");
-        }
+		if ( !$this->isClientOn264()){
+			$this->setCase(true);
+			$this->addNormalChunkXY( "This screen only works on Commodore 16, 116 and Plus/4", 1, 10, "2");
+			$this->addCenteredF5F7ChunkY(24,"1");
+		}
+		else{
+			$y = 6;
+			$height = 2;
+			$order = array( 7,14,4,13,6,16,11,8,10,9,3,12,5,15,2,1 );
+			$boxline = chr(32). str_repeat(chr(120+127).chr(81+127),19) . chr(32);
+			$boxline .= chr(32).str_repeat(chr(33+127).chr(104+127),19) . chr(32);
+			$this->addScreenCodeChunk(
+				str_repeat($boxline, 4*$height),
+				40*$y-80,
+				"0"
+			);
+			
+			for ( $a=0 ; $a < 15; $a++){
+				for ( $l=0 ; $l < 8; $l++){
+					$this->addPaintBrushChunk(
+						str_repeat(chr($order[$a]-1+(16*$l)),$height),
+						$y*40+$a*$height +5+ ($l*80)-80,
+						$height,
+						40-$height);
+				}
+			}
+			//$this->drawBox(4,$y-3,32,2+8*$height,"1");
+			$this->addCenteredF5F7ChunkY(24,"E1", "", true);
+		}
 		print $this->getCurrentScreen();
 	}
 
