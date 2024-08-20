@@ -47,7 +47,7 @@ class wic64Portal extends sktpBaseScreen{
         $this->controller->setStartScreen();
         return $this->handleDownloadSimple($url, $dl); //don't save on SD
 
-//		print $this->getCurrentScreen();
+//		$this->oScreen->print();
 	}
 
     //duplicate from kick.php, FIXME, move this to other location
@@ -69,7 +69,7 @@ class wic64Portal extends sktpBaseScreen{
 		}
 		else{
 			$this->enforceScreenUpdate();
-			print $this->getCurrentScreen();
+			$this->oScreen->print();
 		}
 		return false;
 	}

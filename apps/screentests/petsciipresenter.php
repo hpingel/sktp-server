@@ -68,13 +68,13 @@ class petsciipresenter extends sktpBaseScreen{
 			1*40, 29, 0);
 
 //		$this->addCenteredF5F7ChunkY(24);
-		print $this->getCurrentScreen();
+		$this->oScreen->print();
 	}
 
 	public function updateScreen(){
 		$this->enforceScreenUpdate();
 		//in here, only update those parts that need to be updated
-		print $this->getCurrentScreen();
+		$this->oScreen->print();
 	}
 
 	public function handleKeypress($key, $enforceClear){

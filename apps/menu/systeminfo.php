@@ -67,7 +67,7 @@ class systeminfo extends sktpBaseScreen{
 
 		$this->addCenteredF5F7ChunkY(24);
 		$this->addColorCharsetChunk(0,0,true);
-		print $this->getCurrentScreen();
+		$this->oScreen->print();
 	}
 
 	public function handleKeypress($key, $enforceClear){
@@ -80,7 +80,7 @@ class systeminfo extends sktpBaseScreen{
 		}
 		else{
 			$this->enforceScreenUpdate();
-			print $this->getCurrentScreen();
+			$this->oScreen->print();
 		}
 		return false;
 	}

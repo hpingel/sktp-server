@@ -156,7 +156,7 @@ class welcome extends sktpBaseScreen{
 		*/
 		$this->addColorCharsetChunk(0,0,true);
 
-		print $this->getCurrentScreen();
+		$this->oScreen->print();
 	}
 
 	public function handleKeypress($key, $enforceClear){
@@ -165,7 +165,7 @@ class welcome extends sktpBaseScreen{
 		if ( $this->list->handleKeypress($key)){
 			$this->list->updateSelection();
 			$this->enforceScreenUpdate();
-			print $this->getCurrentScreen();
+			$this->oScreen->print();
 			return false;
 		}
 		else switch ($key) {
@@ -191,7 +191,7 @@ class welcome extends sktpBaseScreen{
 				}
 				else{
 					$this->enforceScreenUpdate();
-					print $this->getCurrentScreen();
+					$this->oScreen->print();
 				}
 		}
 		return $pageChange;
@@ -199,6 +199,7 @@ class welcome extends sktpBaseScreen{
 
 	private function handleListAction( $listaction ){
 		if (array_key_exists($listaction, $this->listactions)){
+			$this->list->focusEntry($listaction);
 			$this->setAppScreen(
 				$this->listactions[$listaction][0],
 				$this->listactions[$listaction][1]

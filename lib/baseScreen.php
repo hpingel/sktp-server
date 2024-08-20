@@ -20,7 +20,9 @@
 *
 */
 
-class sktpBaseScreen {
+require_once("lib/basicContentChunks.php");
+
+class sktpBaseScreen extends overlayBasicContentChunks{
 
 	const PETSCII_KEY = [
 		"special_02_proxy_download" => "02", //used internal to try to trigger proxy download
@@ -97,48 +99,30 @@ class sktpBaseScreen {
 	];
 
 	private
-		$debug,
-		$screenType,
-		$initialScreen,
-		$currentScreen,
 		$registeredKeys,
-		$screenRefresh,
-		$tftImage,
-		$updateScreenColors,
-		$screenColorBG,
-		$screenColorBorder,
-		$screenCharsetIsLowerCase,
 		$sessionVars,
-		$sessionVarPrefix,
-		$typeIs264,
-		$nativeTEDColorsFor264;
+		$sessionVarPrefix;
 
-	function __construct( $debug ){
+	function __construct( $debug, $subscreenSuffix = "", $nativeTEDColorsFor264 = false ){
+		parent::__construct(
+			$debug, 
+			intval($_SESSION["type"]) == 264, 
+			$this->isClientWiC64(),
+			$nativeTEDColorsFor264
+		);
 		$this->registeredKeys = array();
-		$this->currentScreen = "";
-		$this->initialScreen = "";
-		$this->screenRefresh = "";
-		$this->tftImage      = "";
-		$this->debug = $debug;
 		$this->sessionVars = array();
-		$this->sessionVarPrefix = $_SESSION["application"] . "_" . $_SESSION["screen"] . "";
-		$this->screenColorBG = 0;
-		$this->screenColorBorder = 0;
-		$this->screenCharsetIsLowerCase = true;
-		$this->updateScreenColors = false;
+		$this->sessionVarPrefix = $_SESSION["application"] . "_" . $_SESSION["screen"] . $subscreenSuffix;
 		if (!isset($_SESSION[$this->sessionVarPrefix]))
 			$_SESSION[$this->sessionVarPrefix] = array();
-		$this->typeIs264 = intval($_SESSION["type"]) == 264;
-		$this->nativeTEDColorsFor264 = false;
 	}
 
-	public function allowNativeTEDColors(){
-		if ($this->typeIs264)
-			$this->nativeTEDColorsFor264 = true;
+	public function isClientOn264(){
+		return $this->typeIs264;
 	}
 
-	protected function setCase( $case ){
-		$this->screenCharsetIsLowerCase = $case;
+    protected function isClientWiC64(){
+		return (isset($_SESSION["clientDevice"]) && $_SESSION["clientDevice"] === "wic");
 	}
 
 	public function isSessionVarRegistered($key){
@@ -215,39 +199,7 @@ class sktpBaseScreen {
 		return array_key_exists( $key, $this->registeredKeys);
 	}
 
-	protected function isClientWiC64(){
-		return (isset($_SESSION["clientDevice"]) && $_SESSION["clientDevice"] === "wic");
-	}
-
-	public function isClientOn264(){
-		return $this->typeIs264;
-	}
-
-	protected function getCurrentScreen(){
-		if ( $this->debug )
-		{
-			print "<hr/><pre>\n";
-			print "DEBUG";
-			print "</pre>\n";
-		}
-
-		$colors = "";
-		if ($this->updateScreenColors || $this->screenType == chr(0))
-		{
-			$this->updateScreenColors = false;
-			$colors = chr(4) . chr($this->screenColorBorder+1) . chr($this->screenColorBG +1) . ($this->screenCharsetIsLowerCase ? chr(1):chr(2));
-		}
-		if( $_SESSION["sktpv"] < 2){
-			$this->screenRefresh = "";
-			$colors = "";
-		}
-
-		if( $_SESSION["sktpv"] < 4){
-			$this->tftImage = "";
-		}
-
-		return $this->screenType . $colors. $this->currentScreen . $this->screenRefresh. $this->tftImage;
-	}
+	// convenience methods for normal chunk
 
 	public function addNormalChunkXY($chunk, $x, $y, $color){
 		$this->addNormalChunk($chunk, $x + 40 * $y, $color);
@@ -261,51 +213,25 @@ class sktpBaseScreen {
 		$this->addNormalChunk($chunk, $x + 40 * $y, $color);
 	}
 
-	public function addNormalChunk($chunk, $pos, $color){
-		if ($this->isClientWiC64())
-		{
-			//for performance reasons use screencode chunk instead of
-			//normal chunk when the assembler client is rendering the
-			//sktp screens, assembler client then can put chars out faster
-			//the workload is shifted over to the PHP side
-			$inverse = false;
-			$colorVal = hexdec($color);
-			if ($colorVal >= 128){
-				$color = strval(dechex(hexdec(strtolower($color))-128));
-				$inverse = true;
-			}
-			$chunk = $this->asciiString2Screencode($chunk, true, $inverse);
-			$this->addGenericChunk(2, $chunk, $pos, strlen($chunk), $color);
-		}
-		else{
-			if ($this->screenCharsetIsLowerCase)
-				$chunk = $this->strAscii2Petscii($chunk);
-			$this->addGenericChunk(0, $chunk, $pos, strlen($chunk), $color);
-		}
-	}
-
 	public function addNormalChunkXYNoMap($chunk, $x, $y, $color){
 		$this->addNormalChunkNoMap($chunk, $x + 40 * $y, $color);
 	}
 
 	//so that chr value stays unchanged
 	public function addNormalChunkNoMap($chunk, $pos, $color){
-		$this->addGenericChunk(0, $chunk, $pos, strlen($chunk), $color);
+		$this->addNormalChunk($chunk, $pos, $color, true);
 	}
 
 	public function addScreenCodeChunkXY($chunk, $x, $y, $color){
 		$this->addScreenCodeChunk($chunk, $x + 40 * $y, $color);
 	}
 
-	public function addScreenCodeChunk($chunk, $pos, $color){
-		//if( $_SESSION["sktpv"] > 1)
-		$this->addGenericChunk(2, $chunk, $pos, strlen($chunk), $color);
-	}
-
 	public function addCenteredScreenCodeChunkY($chunk, $y, $color){
 		$x= intval( (40-strlen($chunk))/2 );
 		$this->addScreenCodeChunkXY($chunk, $x, $y, $color);
 	}
+
+	//keystroke convenience method
 
 	protected function isScreenExitKeypress($key){
 		if ( $this->isClientOn264() )
@@ -360,7 +286,7 @@ class sktpBaseScreen {
 		{
 			$minLength = strlen($c) + strlen($exitKey) +1;
 			if ( $minLength < 38){
-				if ( $minLength + strlen($exitKeyLengend) > 29){
+				if ( $minLength + strlen($exitKeyLegend) > 28){
 					$exitKeyLegend = $uppercase ? " EXIT":" Exit";
 				}
 				$c .= " " .$this->getScreenCodeFormattedKeyLegend($exitKey.$exitKeyLegend);
@@ -369,140 +295,6 @@ class sktpBaseScreen {
 		$color = $this->nativeTEDColorsFor264 ? "7E": $color;
 
 		$this->addCenteredScreenCodeChunkY($c, $y, $color);
-	}
-
-	public function addCharRepeatChunk($char, $pos, $count, $color){
-		$this->addGenericChunk(1, $char, $pos, $count, $color);
-	}
-
-	public function addColorCharsetChunk($borderColor, $backgroundColor, $isCharsetLowerCase){
-		$this->updateScreenColors = true;
-		if( $this->typeIs264 && !$this->nativeTEDColorsFor264){
-			$backgroundColor = $this->vic2tedColorMatchingSingle($backgroundColor);
-			$borderColor = $this->vic2tedColorMatchingSingle($borderColor);
-		}
-		$this->screenColorBG = $backgroundColor;
-		$this->screenColorBorder = $borderColor;
-		$this->screenCharsetIsLowerCase = $isCharsetLowerCase;
-	}
-
-	public function addVerticalScreenCodeCharChunk($chars, $startpos, $repeatcount, $color){
-		//if( $_SESSION["sktpv"] > 1)
-		//length 6+chars
-		if( $this->typeIs264 && !$this->nativeTEDColorsFor264 )
-			$color=$this->vic2tedColorMatching($color);
-		else
-			$color=chr(hexdec($color));
-
-		$this->currentScreen .= chr(5).
-				chr(strlen($chars)).				//charcount
-				chr($startpos%256). 				//lsb startpos
-				chr(intval($startpos/256)). //msb startpos
-				$color.
-				chr($repeatcount).					//repeatcount
-				$chars;											//chars
-	}
-
-	public function addPaintBrushChunk($colorlist, $startpos, $repeatcount, $gap){
-		//if( $_SESSION["sktpv"] > 1)
-		$posMSB = intval($startpos/256);
-		$length = strlen($colorlist);
-		$lengthMSB = intval($length/256);
-		if (($lengthMSB & 2) == 2) $posMSB = $posMSB + 32; //bit 5 / 512
-		if (($lengthMSB & 1) == 1) $posMSB = $posMSB + 16; //bit 4 / 256
-
-		$colorlist = str_replace(chr(0),chr(16), $colorlist);
-		if( $this->typeIs264 && !$this->nativeTEDColorsFor264 )
-			$colorlist = $this->vic2tedColorMatchingOrd($colorlist);
-
-		$this->currentScreen .= chr(6).
-				chr($length % 256 ).  //charcount
-				chr($startpos%256).   //lsb startpos
-				chr($posMSB).         //msb startpos
-				chr($gap).            //gap between repeats
-				chr($repeatcount).    //repeatcount
-				$colorlist;           //chars
-	}
-
-
-	//see https://www.forum64.de/index.php?thread/122351-farbmapping-von-vic-ii-farben-zu-ted-farben-bei-portierung-von-c64-screens-zu-c1
-	private function vic2tedColorMatching($colors){
-		$converted = "";
-		for ($z = 0; $z < strlen($colors); $z++){
-			$converted .= chr($this->vic2tedColorMatchingSingle(hexdec($colors[$z])));
-		}
-		return $converted;
-	}
-
-	private function vic2tedColorMatchingOrd($colors){
-		$converted = "";
-		for ($z = 0; $z < strlen($colors); $z++){
-			$converted .= chr($this->vic2tedColorMatchingSingle(ord($colors[$z])));
-		}
-		return $converted;
-	}
-
-	private function vic2tedColorMatchingSingle($color){
-		if ( !is_int($color)) die("We expect integer!");
-		// mikes palette
-		//avoid 0 for black, use 16 instead
-		$palette = array( 16,113,18,83,43,69,13,105,41,9,66,17,49,101,61,81);
-		// macBacon 0, 113, 34, 99, 68, 69, 38, 103, 72, 25, 66, 17, 49, 101, 86, 81
-		return $palette[$color];
-
-	}
-
-	private function addGenericChunk($type, $str, $pos, $length, $color){
-		//length: 5 + string length
-		//if ($pos > 999) $pos = 999;
-		//if ($length > 1000){ $length = 1000; }
-		$posMSB = intval($pos/256);
-		$lengthMSB = intval($length/256);
-		if (($lengthMSB & 2) == 2) $posMSB = $posMSB + 32; //bit 5 / 512
-		if (($lengthMSB & 1) == 1) $posMSB = $posMSB + 16; //bit 4 / 256
-		//error_log ("length: " . $length . " bits " . ($lengthMSB & 1) . " ". ($lengthMSB & 2) . " p " . $posMSB . " pos ". intval($pos/256) . " l " . $lengthMSB,0 );
-
-		if( $this->typeIs264 && !$this->nativeTEDColorsFor264){
-			$color = hexdec($color);
-			$reverse = ( $color > 127);
-			if ($reverse)  $color -= 128;
-			$color=$this->vic2tedColorMatchingSingle($color);
-			$color = chr($color + ($reverse ? 128:0));
-		}
-		else
-			$color=chr(hexdec($color));
-		$this->currentScreen .= chr($type).
-		 		chr($length % 256).
-				chr($pos % 256).
-				chr($posMSB).
-				$color.
-				$str;
-	}
-
-	protected function enableAutoScreenRefresh( $timeout ){
-		$this->screenRefresh = chr(3).chr($timeout);
-	}
-
-	protected function addTFTImageURL( $url ){
-		$filename="image.tga";
-		$saveflag = "0";
-		$this->tftImage =
-				chr(7) .
-				chr(strlen($url)).
-				chr(strlen($filename)).
-				$saveflag.
-				$url.
-				$filename;
-	}
-
-	protected function addTFTImage($image){
-		$length = strlen($image);
-		$this->tftImage =
-				chr(8) .
-				chr(intval($length/65536)).
-				chr(intval($length/256)).
-				chr($length % 256).
-				$image;
 	}
 
 	protected function drawTitleBar( $section )
@@ -517,111 +309,20 @@ class sktpBaseScreen {
 		$this->addCharRepeatChunk(chr(96),   $y*40, 40, $color);
 	}
 
-
-	private function asciiChar2ScreencodeOrd($char, $ascii = true){
-		$val = ord($char);
-		if ( $this->screenCharsetIsLowerCase && $ascii && $val >= 97 && $val <= 127 ) //lowercase letters
-			$val -= 96;
-		else if ( !$ascii && $val >= 97 && $val <= 127 ) //lowercase letters
-			$val -= 32;
-		else if ( $ascii && $val == 95)
-			$val = 100; // imitate non-existing underscore with petscii "underscore"
-		else if ( $this->screenCharsetIsLowerCase && $ascii && $val >= 91 && $val <= 96 ) //lowercase letters
-			$val -= 64;
-		else if ( !$this->screenCharsetIsLowerCase && $ascii && $val >= 65 && $val <= 95 ) //uppercase letters
-			$val -= 64;
-		else if ( !$ascii && $val >= 64 && $val <= 90 ) //uppercase letters
-			$val -= 64;
-		else if ( !$ascii && $val >= 91 && $val <= 95 ) //uppercase letters
-			$val -= 64;
-		else if ( $val >= 160 && $val <= 191 ) //uppercase letters
-			$val -= 64;
-		//else if ( !$ascii && $val >= 192)
-		//	$val -= 96;
-		return $val;
-	}
-
-	private function asciiChar2Screencode($char, $ascii = true, $inverse = false){
-		$val = $this->asciiChar2ScreencodeOrd($char, $ascii);
-		return chr($val + ($inverse ? 128 : 0));
-	}
-
-	public function petsciiString2Screencode($str){
-		return $this->asciiString2Screencode($str, false);
-	}
-
-	public function asciiString2Screencode($str, $ascii = true, $inverse = false){
-		if (strlen($str) === 0)
-		  return "";
-		$strArray = str_split($str,1);
-		$str="";
-		foreach ( $strArray as $char)
-			$str.= $this->asciiChar2Screencode($char, $ascii, $inverse);
-		return $str;
-	}
-
 	protected function getScreenCodeFormattedKeyLegend($keyLegend){
 		$firstBlank = strpos($keyLegend," ",1);
 		$result = "";
 		for ($z=0; $z < $firstBlank; $z++){
 			$char = substr($keyLegend,$z,1);
 			$inverse = $char == "/" ? 0 : 128;
-			$result .= chr($this->asciiChar2ScreencodeOrd($char) + $inverse);
+			$result .= chr($this->asciiChar2ScreencodeOrd($this->isCharsetLowerCase(), $char) + $inverse);
 		}
 		$result.= $this->asciiString2Screencode(substr($keyLegend, $firstBlank));
 		return $result;
 	}
 
-	protected function setFullScreen( $screen ){
-		$this->initialScreen = $screen;
-	}
-
-	protected function enforceClearScreen()
-	{
-		$this->screenType = chr(0);
-	}
-
-	protected function enforceScreenUpdate()
-	{
-		$this->screenType = chr(1);
-	}
-
-	protected function setScreenType( $type )
-	{
-		$this->screenType = $type;
-	}
-
 	protected function sktpToUpper($str){
 		return strtoupper($str);
-	}
-
-	//only use this on screens with lowercase charset!
-	public function strAscii2Petscii( $str ){
-		$str2= "";
-		for ($z=0;$z<strlen($str);$z++){
-			$a = ord(substr($str,$z,1));
-			if ($a >64 && $a < 91)
-				$a = $a + 32;
-			else if ($a >96 && $a < 123)
-				$a = $a - 32;
-			else if ($a == 95 ) $a = 164; // imitate underscore, replace arrowleft
-			$str2 .= chr($a);
-		}
-		return $str2;
-	}
-
-	public function strPetscii2Ascii( $str ){
-		$str2= "";
-		for ($z=0;$z<strlen($str);$z++){
-			$a = ord(substr($str,$z,1));
-			if ($a >64 && $a < 91)
-				$a = $a - 32;
-			else if ($a >96 && $a < 123)
-				$a = $a + 32;
-			else if ($a == 164 ) $a = 95; // imitate underscore, replace arrowleft
-			$str2 .= chr($a);
-		}
-		return $str2;
 	}
 
 	public function drawBox($x, $y, $width, $height, $color ="3", $inverse = false, $rounded = false){
@@ -765,7 +466,7 @@ class sktpBaseScreen {
 		$this->enforceScreenUpdate();
 		$this->addNormalChunkXY(
 			"Can't launch " . implode(",",$nolaunch) ,$x, $y, "A");
-		print $this->getCurrentScreen();
+		$this->oScreen->print();
 	}
 
 	public function encodeDownloadLinkSimple($x){

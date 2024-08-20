@@ -46,7 +46,7 @@
 			$qrData = $qr->generateQRCodeData( 'https://'.$_SERVER["SERVER_NAME"]);
 			$qr->drawQRCode($qr->getPetsciiQRCodeData($qrData, true),"left","center","F");
 			$qr->drawQRCode($qr->getPetsciiQRCodeData($qrData, false),"right","center","B");
-			print $this->getCurrentScreen();
+			$this->oScreen->print();
 	 	}
 
 	 	public function handleKeypress($key, $enforceClear){

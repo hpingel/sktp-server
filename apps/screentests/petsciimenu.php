@@ -45,7 +45,8 @@ class petsciimenu extends sktpBaseScreen{
 			"Presenter" => "O",
 			"QR-Code test" => "Q",
 			"Page skeleton" => "S",
-			"Page skeleton with list" => "I"
+			"Page skeleton with list" => "I",
+			"Long content test" => "L"
 		);
 
 		$this->listactions = array(
@@ -59,7 +60,8 @@ class petsciimenu extends sktpBaseScreen{
 			"I" => array( "screentests", "screenexample_with_list"),
 			"O" => array( "screentests", "petsciipresenter"),
 			"V" => array( "screentests", "vic2colors"),
-			"E" => array( "screentests", "tedcolors")
+			"E" => array( "screentests", "tedcolors"),
+			"L" => array( "screentests", "longcontenttest")
 		);
 
 		$this->list = new puiList( $this, 6, 9, 28, 9, 0, true);
@@ -87,13 +89,13 @@ class petsciimenu extends sktpBaseScreen{
 		$this->drawHorizontalLine( 23 );
 		$this->addCenteredF5F7ChunkY(24);
 
-		print $this->getCurrentScreen();
+		$this->oScreen->print();
 	}
 
 	public function updateScreen(){
 		$this->enforceScreenUpdate();
 		//in here, only update those parts that need to be updated
-		print $this->getCurrentScreen();
+		$this->oScreen->print();
 	}
 
 	public function handleKeypress($key, $enforceClear){
@@ -101,7 +103,7 @@ class petsciimenu extends sktpBaseScreen{
 		if ( $this->list->handleKeypress($key)){
 			$this->list->updateSelection();
 			$this->enforceScreenUpdate();
-			print $this->getCurrentScreen();
+			$this->oScreen->print();
 			return false;
 		}
 		else if ($this->isScreenExitKeypress($key)){
@@ -123,6 +125,7 @@ class petsciimenu extends sktpBaseScreen{
 			case self::PETSCII_KEY["t"]:
 			case self::PETSCII_KEY["o"]:
 			case self::PETSCII_KEY["v"]:
+			case self::PETSCII_KEY["l"]:
 				return $this->handleListAction( chr(hexdec($key)) );
 			default:
 					$this->updateScreen();
@@ -132,6 +135,7 @@ class petsciimenu extends sktpBaseScreen{
 
 	private function handleListAction( $listaction ){
 		if (array_key_exists($listaction, $this->listactions)){
+			$this->list->focusEntry($listaction);
 			$this->setAppScreen(
 				$this->listactions[$listaction][0],
 				$this->listactions[$listaction][1]

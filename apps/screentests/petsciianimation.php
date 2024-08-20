@@ -70,7 +70,7 @@ class petsciianimation extends sktpBaseScreen{
 			$this->addScreenCodeChunkXY( $line, 25-$this->getSessionVar("hpos"), $z + 17, $color);
 		}
 		$this->addNormalChunkXY("Refresh delay: " . str_pad($this->getSessionVar("refreshSpeed"),2,"0",STR_PAD_LEFT),12,23,"1");
-		print $this->getCurrentScreen();
+		$this->oScreen->print();
 
 		$this->setSessionVar("hpos", $this->getSessionVar("hpos") + $this->getSessionVar("dir"));
 		if ( $this->getSessionVar("hpos") <= 0 || $this->getSessionVar("hpos") > 24)

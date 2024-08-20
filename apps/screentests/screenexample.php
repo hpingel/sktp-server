@@ -44,13 +44,13 @@ class screenexample extends sktpBaseScreen{
 
 		$this->drawHorizontalLine( 23 );
 		$this->addCenteredF5F7ChunkY(24,"1");
-		print $this->getCurrentScreen();
+		$this->oScreen->print();
 	}
 
 	public function updateScreen(){
 		$this->enforceScreenUpdate();
 		//in here, only update those parts that need to be updated
-		print $this->getCurrentScreen();
+		$this->oScreen->print();
 	}
 
 	public function handleKeypress($key, $enforceClear){

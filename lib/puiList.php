@@ -196,6 +196,15 @@ class puiList
 		$this->screen->setSessionVar("listScrollPosOld", $scrollPos);
  	}
 
+	public function focusEntry($listaction){
+		foreach ($this->items as $no => $data){
+			if ($data["key"] === $listaction){
+				$this->screen->setSessionVar("listSelection", $no);
+				break;
+			}
+		}
+	}
+
 	private function drawSelectPosition($selection){
 		$s = " ".$selection."/".$this->getItemCount()." ";
 		$this->screen->addNormalChunkXY( $s, $this->x + $this->width - strlen($s) -1, $this->y+$this->height, "A");

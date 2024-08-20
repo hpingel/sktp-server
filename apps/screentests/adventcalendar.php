@@ -186,7 +186,7 @@ class adventcalendar extends sktpBaseScreen{
 			$this->paintBox($n);
 
 		//$this->addNormalChunkXY("Theme:" . $this->getSessionVar("theme"), 0,0,"1");
-		print $this->getCurrentScreen();
+		$this->oScreen->print();
 	}
 
 	public function updateScreen(){
@@ -195,7 +195,7 @@ class adventcalendar extends sktpBaseScreen{
 		$this->paintBox( $this->getSessionVar("focus_old"));
 		//$this->addNormalChunkXY("Theme:" . $this->getSessionVar("theme"), 0,0,"1");
 
-		print $this->getCurrentScreen();
+		$this->oScreen->print();
 	}
 
 	private function paintBox( $n ){
@@ -286,7 +286,7 @@ class adventcalendar extends sktpBaseScreen{
 				$requestedDay = $this->getSessionVar("doors")[$door]["number"];
 				if ($requestedDay > date("j") && !$this->cheatMode){
 					$this->enforceScreenUpdate();
-					print $this->getCurrentScreen();
+					$this->oScreen->print();
 					return false;
 				}
 				$doorsOpened = $this->getSessionVar("doors_opened");
@@ -313,7 +313,7 @@ class adventcalendar extends sktpBaseScreen{
 					return false;
 		}
 		$this->enforceScreenUpdate();
-		print $this->getCurrentScreen();
+		$this->oScreen->print();
 		return $pageChange;
 	}
 }

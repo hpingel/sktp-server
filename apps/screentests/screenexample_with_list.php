@@ -72,20 +72,20 @@ class screenexample_with_list extends sktpBaseScreen{
 		$this->addNormalChunkXY( "This is a skeleton for your own screen", 1, 12, "2");
 		$this->drawHorizontalLine( 23 );
 		$this->addCenteredF5F7ChunkY(24);
-		print $this->getCurrentScreen();
+		$this->oScreen->print();
 	}
 
 	public function updateScreen(){
 		$this->enforceScreenUpdate();
 		//in here, only update those parts that need to be updated
-		print $this->getCurrentScreen();
+		$this->oScreen->print();
 	}
 
 	public function handleKeypress($key, $enforceClear){
 		if ( $this->list->handleKeypress($key)){
 			$this->list->updateSelection();
 			$this->enforceScreenUpdate();
-			print $this->getCurrentScreen();
+			$this->oScreen->print();
 			return false;
 		}
 		else if ($this->isScreenExitKeypress($key)){

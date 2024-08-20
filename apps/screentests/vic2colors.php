@@ -128,13 +128,13 @@ class vic2colors extends sktpBaseScreen{
         }
         $this->drawBox(3,$y-1,34,2+2*$height,"F");       
 		$this->addCenteredF5F7ChunkY(24,"F");
-		print $this->getCurrentScreen();
+		$this->oScreen->print();
 	}
 
 	public function updateScreen(){
 		$this->enforceScreenUpdate();
 		//in here, only update those parts that need to be updated
-		print $this->getCurrentScreen();
+		$this->oScreen->print();
 	}
 
 	public function handleKeypress($key, $enforceClear){

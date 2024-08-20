@@ -32,7 +32,6 @@ class petsciicharset extends sktpBaseScreen{
 
 	public function renderCompleteScreen(){
 		$lc = $this->getSessionVar("lowercase");
-		$this->setCase($lc);
 		$this->enforceClearScreen();
 		$this->addColorCharsetChunk(0, 0, $lc);
 		$title = "Screen test (Charset: ". ($lc ? "Mixed case" : "Upper case + GFX").")";
@@ -56,7 +55,7 @@ class petsciicharset extends sktpBaseScreen{
 		$this->drawHorizontalLine( 23 );
 		$this->addCenteredF5F7ChunkY(24,"7", "T Toggle Case",!$lc);
 
-		print $this->getCurrentScreen();
+		$this->oScreen->print();
 	}
 
 	private function renderCharBlock($y, $start, $scrCodeOffset){
@@ -67,7 +66,8 @@ class petsciicharset extends sktpBaseScreen{
 		$stop = $start+31;
 		for ($z = $start; $z<= $stop; $z++ ){
 			$cnt .= chr( $z );
-			$scrcodeline .= chr($z + $scrCodeOffset + (($z+$scrCodeOffset)==64?32:0)); //workaround for @ chr(0)
+			$scrCode = $z + $scrCodeOffset;
+			$scrcodeline .= chr( $scrCode + ($scrCode==0?32:0)); //workaround for @ chr(0)
 			//turns @ into space to avoid problems
 		}
 		$this->addNormalChunkXY(
@@ -90,7 +90,7 @@ class petsciicharset extends sktpBaseScreen{
 				$this->renderCompleteScreen();
 				break;
 			default:
-					$this->renderCompleteScreen();
+				$this->renderCompleteScreen();
 		}
 		return false;
 	}

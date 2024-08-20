@@ -23,29 +23,37 @@
 class tedcolors extends sktpBaseScreen{
 
 	private $controller,
-	$pc;
+		$pc;
 
 	function __construct( $controller ){
-		parent::__construct( false );
+		parent::__construct( 
+			false, //debugmode 
+			"", //suffix
+			true //native ted colors
+		);
 		$this->controller = $controller;
-		$this->allowNativeTEDColors();
 	}
 
 	public function renderCompleteScreen(){
 		$this->enforceClearScreen();
-		$this->addColorCharsetChunk(
-				0, //border color
-				0, //background color
-				false //lower case charset / upper case charset
-		);
-		$this->drawTitleBar("           *** TED COLORS ***");
 
 		if ( !$this->isClientOn264()){
-			$this->setCase(true);
+				$this->addColorCharsetChunk(
+					0, //border color
+					0, //background color
+					true //lower case charset / upper case charset
+			);
+			$this->drawTitleBar("           *** TED COLORS ***");
 			$this->addNormalChunkXY( "This screen only works on Commodore 16, 116 and Plus/4", 1, 10, "2");
 			$this->addCenteredF5F7ChunkY(24,"1");
 		}
 		else{
+			$this->addColorCharsetChunk(
+				0, //border color
+				0, //background color
+				false //lower case charset / upper case charset
+			);
+			$this->drawTitleBar("           *** TED COLORS ***");
 			$y = 6;
 			$height = 2;
 			$order = array( 7,14,4,13,6,16,11,8,10,9,3,12,5,15,2,1 );
@@ -69,13 +77,13 @@ class tedcolors extends sktpBaseScreen{
 			//$this->drawBox(4,$y-3,32,2+8*$height,"1");
 			$this->addCenteredF5F7ChunkY(24,"E1", "", true);
 		}
-		print $this->getCurrentScreen();
+		$this->oScreen->print();
 	}
 
 	public function updateScreen(){
 		$this->enforceScreenUpdate();
 		//in here, only update those parts that need to be updated
-		print $this->getCurrentScreen();
+		$this->oScreen->print();
 	}
 
 	public function handleKeypress($key, $enforceClear){
