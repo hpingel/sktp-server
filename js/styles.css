@@ -1,7 +1,7 @@
 /***************************************************************
 *  Copyright notice
 *
-*  (c) 2023 Henning Pingel
+*  (c) 2023-2024 Henning Pingel
 *  All rights reserved
 *
 * This program is free software: you can redistribute it and/or modify
