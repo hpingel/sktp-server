@@ -20,9 +20,9 @@
 *
 */
 
-require_once("lib/baseScreen.php");
+namespace lib;
 
-class sktpHandler {
+class handler {
 
 	const maxSktpVersion = 5;
 
@@ -194,7 +194,8 @@ class sktpHandler {
 						"petsciiballoonface",
 						"petsciipresenter",
 						"vic2colors",
-						"tedcolors"
+						"tedcolors",
+						"longcontenttest"
 					));
 					break;
 /*
@@ -209,67 +210,5 @@ class sktpHandler {
 		}
 	}
 }
-
-class controller {
-
-	private
-		$appName,
-		$validScreens,
-		$errorMSG;
-
-	function __construct($appName, $validScreens){
-		$this->appName = $appName;
-		$this->validScreens = $validScreens;
-		$this->errorMSG = "";
-	}
-
-	public function getStartScreenName(){
-		return $this->validScreens[0];
-	}
-
-	public function setStartScreen(){
-		$_SESSION["screen"] = $this->getStartScreenName();
-	}
-
-	public function getErrorMessage(){
-		return $this->errorMSG;
-	}
-
-	public function launch($key, $enforceClear){
-		$this->errorMSG = "";
-		if ( !isset( $_SESSION["screen"] )){
-			$this->errorMSG = "Screen name info missing.";
-			return false;
-		}
-		$screen = $_SESSION["screen"];
-		if (!in_array( $screen, $this->validScreens)){
-			$this->errorMSG = "Screen name is invalid.";
-			return false;
-		}
-
-		$class = "apps/".$this->appName."/".$screen.".php";
-		if (!file_exists($class)){
-			$this->errorMSG = "Class file not found.";
-			return false;
-		}
-		require_once($class);
-		$oScreen = new $screen($this);
-		if ( $oScreen === false ){
-			$this->errorMSG = "Instance returned false.";
-			return false;
-		}
-
-		if ($key === "")
-			$oScreen->renderCompleteScreen();
-		else if ( $oScreen->handleKeypress($key, $enforceClear)){
-			if ( $_SESSION["application"] === $this->appName)
-				$this->launch("", true); //screen switch caused by keypress
-			else
-				return true; //application has changed, we need full screen of new app
-		}
-		return false;
-	}
-}
-
 
 ?>

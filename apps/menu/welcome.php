@@ -20,9 +20,9 @@
 *
 */
 
-require_once('lib/puiList.php');
+namespace apps\menu;
 
-class welcome extends sktpBaseScreen{
+class welcome extends \lib\sktpBaseScreen{
 
 	private 
 		$list,
@@ -90,7 +90,7 @@ class welcome extends sktpBaseScreen{
 //			"R" => array( "menu", "remoteaccess")
 			//"M" => array( "multiscreendemo", "demo")
 		);
-		$this->listactions["W"] = array( "menu", "wic64Portal");
+//		$this->listactions["W"] = array( "menu", "wic64Portal");
 
 		if ($this->isClientOn264() && $this->isClientWiC64()){
 			$this->listactions = array(
@@ -105,7 +105,7 @@ class welcome extends sktpBaseScreen{
 //				"R" => array( "menu", "remoteaccess")
 			);
 		}
-		$this->list = new puiList( $this, 6, 9, 28, count($this->listactions), 0,true);
+		$this->list = new \pui\ScrollableList( $this, 6, 9, 28, count($this->listactions), 0,true);
 		$type =""; $action="";$key="";
 
 		$c = 1;

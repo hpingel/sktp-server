@@ -20,6 +20,8 @@
 *
 */
 
+namespace lib;
+
 class utf8downgrader {
 
 	protected

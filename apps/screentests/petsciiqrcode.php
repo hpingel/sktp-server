@@ -20,42 +20,42 @@
 *
 */
 
-	require_once('lib/puiQRCode.php');
+namespace apps\screentests;
 
-	class petsciiqrcode extends sktpBaseScreen{
+class petsciiqrcode extends \lib\sktpBaseScreen{
 
-		private $controller;
+	private $controller;
 
-		function __construct( $controller ){
-			parent::__construct( false );
-			$this->controller = $controller;
-	 	}
+	function __construct( $controller ){
+		parent::__construct( false );
+		$this->controller = $controller;
+	}
 
-	 	public function renderCompleteScreen(){
-	 		$this->enforceClearScreen();
-	 		$this->addColorCharsetChunk(2, 0, true);
-			$this->addNormalChunkXY( "PETSCII", 1, 1, "7");
-			$this->addNormalChunkXY( "QR-Code", 1, 3, "7");
-			$this->addScreenCodeChunkXY(
-				$this->getScreenCodeFormattedKeyLegend(
-					($this->isClientOn264()?"F7":"F5") . " Back"
-				), 1,23,"7"
-			);
+	public function renderCompleteScreen(){
+		$this->enforceClearScreen();
+		$this->addColorCharsetChunk(2, 0, true);
+		$this->addNormalChunkXY( "PETSCII", 1, 1, "7");
+		$this->addNormalChunkXY( "QR-Code", 1, 3, "7");
+		$this->addScreenCodeChunkXY(
+			$this->getScreenCodeFormattedKeyLegend(
+				($this->isClientOn264()?"F7":"F5") . " Back"
+			), 1,23,"7"
+		);
 
-			$qr = new puiQRCode($this);
-			$qrData = $qr->generateQRCodeData( 'https://'.$_SERVER["SERVER_NAME"]);
-			$qr->drawQRCode($qr->getPetsciiQRCodeData($qrData, true),"left","center","F");
-			$qr->drawQRCode($qr->getPetsciiQRCodeData($qrData, false),"right","center","B");
-			$this->oScreen->print();
-	 	}
+		$qr = new \pui\QRCode($this);
+		$qrData = $qr->generateQRCodeData( 'https://'.$_SERVER["SERVER_NAME"]);
+		$qr->drawQRCode($qr->getPetsciiQRCodeData($qrData, true),"left","center","F");
+		$qr->drawQRCode($qr->getPetsciiQRCodeData($qrData, false),"right","center","B");
+		$this->oScreen->print();
+	}
 
-	 	public function handleKeypress($key, $enforceClear){
-			if ($this->isScreenExitKeypress($key)){
-				$this->controller->setStartScreen();
-				return true; //screen has changed
-			}
-			$this->renderCompleteScreen();
-	 		return false;
-	 	}
+	public function handleKeypress($key, $enforceClear){
+		if ($this->isScreenExitKeypress($key)){
+			$this->controller->setStartScreen();
+			return true; //screen has changed
+		}
+		$this->renderCompleteScreen();
+		return false;
+	}
 }
 ?>

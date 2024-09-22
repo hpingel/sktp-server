@@ -20,7 +20,9 @@
 *
 */
 
-class puiWrappedText {
+namespace pui;
+
+class WrappedText {
 
 	private
 		$x,
@@ -33,7 +35,7 @@ class puiWrappedText {
 		$borderStyle,
 		$linesUsed;
 
-	function __construct( sktpBaseScreen $screen, $x, $y, $width, $height, $text, $borderStyle = "line"){
+	function __construct( \lib\sktpBaseScreen $screen, $x, $y, $width, $height, $text, $borderStyle = "line"){
 		$this->screen = $screen;
 		$this->x = $x;
 		$this->y = $y;

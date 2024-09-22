@@ -20,10 +20,9 @@
 *
 */
 
+namespace apps\screentests;
 
-require_once('lib/puiWrappedText.php');
-
-class petsciiwrappedtext extends sktpBaseScreen{
+class petsciiwrappedtext extends \lib\sktpBaseScreen{
 
 	private $controller;
 
@@ -44,20 +43,20 @@ class petsciiwrappedtext extends sktpBaseScreen{
 
 		$text = "This is a long text that will be automatically wrapped and displayed unpadded in multiple lines. Wrapping ".
 						"should take care of filling each line nicely with content.";
-		$wt = new puiWrappedText( $this, 0, 1, 20, 14, $text, "border-color:6 font-color:3");
+		$wt = new \pui\WrappedText( $this, 0, 1, 20, 14, $text, "border-color:6 font-color:3");
 		$wt ->render();
 
 		$text2 = "This is a long text that will be automatically wrapped and displayed padded in multiple lines. Wrapping ".
 		"should take care of filling each line nicely with content.";
 
-		$wt2 = new puiWrappedText( $this, 20, 1, 20, 15, $text2, "linePadded border-color:2 font-color:A");
+		$wt2 = new \pui\WrappedText( $this, 20, 1, 20, 15, $text2, "linePadded border-color:2 font-color:A");
 		$wt2 ->render();
 		$text3 = "This is a short text that will be wrapped automatically and displayed inverse.";
-		$wt2 = new puiWrappedText( $this, 0, 15, 18, 8, $text3, "inverse font-color:1");
+		$wt2 = new \pui\WrappedText( $this, 0, 15, 18, 8, $text3, "inverse font-color:1");
 		$wt2 ->render();
 
 		$text4 = "This is a short text that is padded + inverse.";
-		$wt2 = new puiWrappedText( $this, 19, 16, 21, 7, $text4, "inverse padded font-color:1");
+		$wt2 = new \pui\WrappedText( $this, 19, 16, 21, 7, $text4, "inverse padded font-color:1");
 		$wt2 ->render();
 
 		$this->addCenteredF5F7ChunkY(24);

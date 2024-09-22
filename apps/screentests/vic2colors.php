@@ -20,7 +20,9 @@
 *
 */
 
-class vic2colors extends sktpBaseScreen{
+namespace apps\screentests;
+
+class vic2colors extends \lib\sktpBaseScreen{
 
 	private $controller,
         $pc;

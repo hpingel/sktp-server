@@ -20,9 +20,9 @@
 *
 */
 
-require_once('lib/puiList.php');
+namespace apps\screentests;
 
-class petsciimenu extends sktpBaseScreen{
+class petsciimenu extends \lib\sktpBaseScreen{
 
 	private
 		$controller,
@@ -64,7 +64,7 @@ class petsciimenu extends sktpBaseScreen{
 			"L" => array( "screentests", "longcontenttest")
 		);
 
-		$this->list = new puiList( $this, 6, 9, 28, 9, 0, true);
+		$this->list = new \pui\ScrollableList( $this, 6, 9, 28, 9, 0, true);
 		$type =""; $action="";$key="";
 
 		$c = 1;

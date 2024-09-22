@@ -20,7 +20,9 @@
 *
 */
 
-class petsciianimation extends sktpBaseScreen{
+namespace apps\screentests;
+
+class petsciianimation extends \lib\sktpBaseScreen{
 
 	private $controller;
 

@@ -80,6 +80,11 @@ function getSessionId( tgai ){
 }
 
 function startSession(){
+	if ( this.status != 200)
+	{
+		alert ("Error: " + this.status + " " + this.statusText);
+		return;
+	}
 	sessionID = this.responseText;
 	document.addEventListener('keydown', logKey);
 	getScreen();

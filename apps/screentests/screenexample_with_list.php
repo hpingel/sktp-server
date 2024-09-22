@@ -20,9 +20,9 @@
 *
 */
 
-require_once('lib/puiList.php');
+namespace apps\screentests;
 
-class screenexample_with_list extends sktpBaseScreen{
+class screenexample_with_list extends \lib\sktpBaseScreen{
 
 	private
 		$controller,
@@ -46,7 +46,7 @@ class screenexample_with_list extends sktpBaseScreen{
 			"Menu item #10" => "mi10"
 		);
 
-		$this->list = new puiList( $this, 7, 16, 26, 5, 1);
+		$this->list = new \pui\ScrollableList( $this, 7, 16, 26, 5, 1);
 		$type =""; $action="";$key="";
 
 		$c = 1;

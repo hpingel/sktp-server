@@ -20,9 +20,9 @@
 *
 */
 
-require_once('lib/puiWrappedText.php');
+namespace apps\screentests;
 
-class petsciipresenter extends sktpBaseScreen{
+class petsciipresenter extends \lib\sktpBaseScreen{
 
 	private $controller,
         $pc;
@@ -52,12 +52,12 @@ class petsciipresenter extends sktpBaseScreen{
 				true //lower case charset / upper case charset
 		);
 
-		$wt = new puiWrappedText( 
+		$wt = new \pui\WrappedText( 
             $this, 0, 1, 40, 3, 
             $page["title"], 
             "centered font-color:7 borderless inverse");
 		$wt ->render();
-		$wt = new puiWrappedText(
+		$wt = new \pui\WrappedText(
             $this, 0, 5, 40, 17, 
             $page["body"], 
             "font-color:7 borderless ");

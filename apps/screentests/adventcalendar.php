@@ -20,7 +20,9 @@
 *
 */
 
-class adventcalendar extends sktpBaseScreen{
+namespace apps\screentests;
+
+class adventcalendar extends \lib\sktpBaseScreen{
 
 	private
 		$controller,

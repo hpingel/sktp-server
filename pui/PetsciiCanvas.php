@@ -20,14 +20,16 @@
 *
 */
 
-class puiPetsciiCanvas{
+namespace pui;
+
+class PetsciiCanvas{
 
     private
         $screen,
         $invisibleInk,
 		$charsetIsLowercase;
 
-	function __construct( sktpBaseScreen $screen ){
+	function __construct( \lib\sktpBaseScreen $screen ){
 		$this->screen = $screen;
 		$this->charsetIsLowercase = false;
     }

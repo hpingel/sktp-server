@@ -20,7 +20,9 @@
 *
 */
 
-class tedcolors extends sktpBaseScreen{
+namespace apps\screentests;
+
+class tedcolors extends \lib\sktpBaseScreen{
 
 	private $controller,
 		$pc;

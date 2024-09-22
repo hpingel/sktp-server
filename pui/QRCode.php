@@ -20,6 +20,8 @@
 *
 */
 
+namespace pui;
+
 require_once('lib/php-qrcode/src/QR/QRbitstream.php');
 require_once('lib/php-qrcode/src/QR/QRcode.php');
 require_once('lib/php-qrcode/src/QR/QRencode.php');
@@ -36,7 +38,7 @@ require_once('lib/php-qrcode/src/QR/QRstr.php');
 require_once('lib/php-qrcode/src/QR/FrameFiller.php');
 require_once('lib/php-qrcode/src/QR/QRmask.php');
 
-class puiQRCode {
+class QRCode {
 	/*
 	here we have four bits
 	12
@@ -63,7 +65,7 @@ class puiQRCode {
 
 	private $baseScreen;
 
-	public function __construct( sktpBaseScreen $baseScreen ){
+	public function __construct( \lib\sktpBaseScreen $baseScreen ){
 		$this->baseScreen = $baseScreen;
 	}
 

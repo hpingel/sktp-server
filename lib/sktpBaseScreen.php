@@ -20,7 +20,7 @@
 *
 */
 
-require_once("lib/basicContentChunks.php");
+namespace lib;
 
 class sktpBaseScreen extends overlayBasicContentChunks{
 

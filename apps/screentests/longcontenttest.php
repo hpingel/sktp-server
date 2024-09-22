@@ -22,46 +22,75 @@
 
 namespace apps\screentests;
 
-class screenexample extends \lib\sktpBaseScreen{
+class longcontenttest extends \lib\sktpBaseScreen{
 
 	private $controller;
 
 	function __construct( $controller ){
 		parent::__construct( false );
-		$this->registerSessionVar( "exampleVar", 0);
 		$this->controller = $controller;
+		$this->registerSessionVar( "clength", 1);
 	}
 
 	public function renderCompleteScreen(){
 		$this->enforceClearScreen();
 		$this->addColorCharsetChunk(
-				11, //border color
-				12, //background color
+				2, //border color
+				0, //background color
 				true //lower case charset / upper case charset
 		);
-		$this->drawTitleBar("Example screen");
+		$this->drawTitleBar("Long content test screen");
 		$this->drawHorizontalLine( 1 );
-		$this->addNormalChunkXY( "Hello world!", 13, 10, "2");
-		$this->addNormalChunkXY( "This is a skeleton for your own screen", 1, 12, "2");
-
+        $this->updateContent();
 		$this->drawHorizontalLine( 23 );
-		$this->addCenteredF5F7ChunkY(24,"1");
+		$this->addCenteredF5F7ChunkY(24,"7","CRSR-Right Next");
 		$this->oScreen->print();
 	}
 
 	public function updateScreen(){
 		$this->enforceScreenUpdate();
-		//in here, only update those parts that need to be updated
-		$this->oScreen->print();
+        $this->updateContent();
+        $this->oScreen->print();
 	}
+
+    private function updateContent(){
+        $c = $this->getSessionVar("clength");
+        if ($c== 0) $c=1;
+        if ($c> 1000) $c=1;
+        $d=$c+1;
+        $offset = 80;
+		$this->addNormalChunkXY( "Length: ".$d." " , 1, 22, "2");
+        $ls = str_repeat(chr(rand(65,90)),$d);
+        $this->addScreenCodeChunk(
+            $ls,
+            $offset,
+            "1"
+        );
+        $this->addScreenCodeChunk(
+            chr(30),
+            $d+$offset+39,
+            "2"
+        );
+        if ($c > 800 )
+            $this->setSessionVar("clength", 1);
+        else if ($c < 512 )
+            $this->setSessionVar("clength", $c *2);
+        else
+            $this->setSessionVar("clength", $c +32);
+    }
 
 	public function handleKeypress($key, $enforceClear){
 		if ($this->isScreenExitKeypress($key)){
 			$this->controller->setStartScreen();
 			return true; //screen has changed
 		}
-		$this->updateScreen();
-		return false;
+		else switch ($key) {
+			case self::PETSCII_KEY["a"]:
+            case self::PETSCII_KEY["crsr_right"]:
+                $this->updateScreen();
+            break;
+        }
+        return false;
 	}
 }
 ?>

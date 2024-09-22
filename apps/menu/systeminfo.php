@@ -20,7 +20,9 @@
 *
 */
 
-class systeminfo extends sktpBaseScreen{
+namespace apps\menu;
+
+class systeminfo extends \lib\sktpBaseScreen{
 
 	function __construct( $controller ){
 		parent::__construct( false );
@@ -53,7 +55,7 @@ class systeminfo extends sktpBaseScreen{
 		$imv = "-";
 		if ( extension_loaded('imagick') )
 		{
-			$v = Imagick::getVersion();
+			$v = \Imagick::getVersion();
 			preg_match('/ImageMagick ([0-9]+\.[0-9]+\.[0-9]+)/', $v['versionString'], $v);
 			$imv = $v[1];
 		}

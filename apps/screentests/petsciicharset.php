@@ -20,7 +20,9 @@
 *
 */
 
-class petsciicharset extends sktpBaseScreen{
+namespace apps\screentests;
+
+class petsciicharset extends \lib\sktpBaseScreen{
 
 	private $controller;
 

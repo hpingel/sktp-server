@@ -20,8 +20,9 @@
 *
 */
 
+namespace apps\menu;
 
-class wic64Portal extends sktpBaseScreen{
+class wic64Portal extends \lib\sktpBaseScreen{
 
 	function __construct( $controller ){
 		parent::__construct( false );

@@ -20,8 +20,15 @@
 *
 */
 
-require_once("lib/handler.php");
-$sktp = new sktpHandler();
+spl_autoload_register(function ($class) {
+    $file = str_replace('\\', '/', $class) . '.php';
+    if (file_exists($file)) {
+        require $file;
+    }
+});
+
+
+$sktp = new lib\handler();
 $sktp->main();
 
 ?>

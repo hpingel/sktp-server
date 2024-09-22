@@ -20,9 +20,9 @@
 *
 */
 
-require_once('lib/puiWrappedText.php');
+namespace apps\screentests;
 
-class petsciiballoonface extends sktpBaseScreen{
+class petsciiballoonface extends \lib\sktpBaseScreen{
 
 	private $controller;
 
@@ -54,7 +54,7 @@ class petsciiballoonface extends sktpBaseScreen{
 		$epilog = "Friendly PETSCII face sends out greetings to the world";
 
 		$this->drawFace(0, 2, $balloontext);
-		$wt2 = new puiWrappedText( $this, 0, 22, 40, 5, $epilog, "borderlesss centered");
+		$wt2 = new \pui\WrappedText( $this, 0, 22, 40, 5, $epilog, "borderlesss centered");
 		$wt2 ->render();
 	}
 
@@ -108,7 +108,7 @@ class petsciiballoonface extends sktpBaseScreen{
 			$this->addScreenCodeChunkXY( chr(47),$xOffset+22, $yOffset+14, "1");
 			$this->addScreenCodeChunkXY( chr(47),$xOffset+21, $yOffset+15, "1");
 
-			$wt2 = new puiWrappedText( $this, $xOffset+23, $yOffset, 17, 18, $text, "inverse padded centered font-color:1");
+			$wt2 = new \pui\WrappedText( $this, $xOffset+23, $yOffset, 17, 18, $text, "inverse padded centered font-color:1");
 			$wt2 ->render();
 	}
 
